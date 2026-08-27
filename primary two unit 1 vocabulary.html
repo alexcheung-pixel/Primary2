@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primary English Vocabulary Master - At My School</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Comic Neue & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Fredoka', 'Comic Neue', 'Inter', 'sans-serif'],
+                        chinese: ['PingFang HK', 'Lantinghead HK', 'Microsoft JhengHei', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                        },
+                        syllable: {
+                            1: '#2563eb', // Vivid Blue
+                            2: '#d97706', // Warm Amber
+                            3: '#059669', // Emerald
+                            4: '#dc2626', // Bright Red
+                            5: '#7c3aed', // Purple
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .syllable-span {
+            display: inline-block;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            letter-spacing: -0.02em; /* Keep syllables closely joined */
+        }
+        .syllable-span:hover {
+            transform: scale(1.06);
+            filter: brightness(1.1);
+        }
+        .card-flip-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flipped .card-flip-inner {
+            transform: rotateY(180deg);
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        .highlight-word {
+            background-color: #fde047;
+            color: #1e293b;
+            padding: 0.1em 0.3em;
+            border-radius: 0.375rem;
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.8);
+            transform: scale(1.08);
+            display: inline-block;
+            transition: all 0.15s ease-in-out;
+        }
+        .highlight-word-zh {
+            background-color: #f59e0b;
+            color: #ffffff;
+            padding: 0.1em 0.25em;
+            border-radius: 0.375rem;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+            transform: scale(1.15);
+            display: inline-block;
+            transition: all 0.12s ease-in-out;
+        }
+        @keyframes pulse-speaker {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .speaking-active {
+            animation: pulse-speaker 0.8s infinite ease-in-out;
+            color: #2563eb !important;
+        }
+    </style>
+</head>
+<body class="bg-amber-50/50 min-h-screen text-slate-800 font-sans flex flex-col selection:bg-sky-200">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white border-b-4 border-sky-400 shadow-sm sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-sky-400 text-white rounded-2xl flex items-center justify-center text-2xl shadow-md rotate-[-3deg]">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-sky-900 tracking-wide flex items-center gap-2">
+                        Vocab Express <span class="text-xs bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full font-bold">P.1 - P.3 English</span>
+                    </h1>
+                    <p class="text-xs text-slate-500">Unit 1: At my school | 學校生活詞彙</p>
+                </div>
+            </div>
+
+            <!-- View Modes & Controls -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <nav class="bg-slate-100 p-1 rounded-2xl flex gap-1 border border-slate-200">
+                    <button id="btnNavCards" onclick="switchTab('cards')" class="px-3.5 py-1.5 rounded-xl font-semibold text-sm transition-all bg-sky-500 text-white shadow-sm">
+                        <i class="fa-solid fa-clone mr-1"></i> Flashcards
+                    </button>
+                    <button id="btnNavMatch" onclick="switchTab('match')" class="px-3.5 py-1.5 rounded-xl font-semibold text-sm text-slate-600 hover:text-sky-600 transition-all">
+                        <i class="fa-solid fa-puzzle-piece mr-1"></i> Matching
+                    </button>
+                    <button id="btnNavQuiz" onclick="switchTab('quiz')" class="px-3.5 py-1.5 rounded-xl font-semibold text-sm text-slate-600 hover:text-sky-600 transition-all">
+                        <i class="fa-solid fa-spell-check mr-1"></i> Spelling
+                    </button>
+                    <button id="btnNavManage" onclick="switchTab('manage')" class="px-3.5 py-1.5 rounded-xl font-semibold text-sm text-slate-600 hover:text-sky-600 transition-all">
+                        <i class="fa-solid fa-folder-plus mr-1"></i> Units
+                    </button>
+                </nav>
+
+                <!-- Audio Settings Button -->
+                <button onclick="toggleAudioSettingsModal()" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-2xl text-slate-600 flex items-center justify-center transition-all border border-slate-200" title="Speech Settings">
+                    <i class="fa-solid fa-sliders"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full flex flex-col items-center">
+
+        <!-- TAB 1: FLASHCARDS VIEW -->
+        <section id="tabCards" class="w-full flex flex-col items-center">
+            
+            <!-- Unit Header & Selector Bar -->
+            <div class="w-full max-w-2xl bg-white p-3 md:p-4 rounded-3xl shadow-sm border border-slate-200/80 mb-6 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Current Unit:</span>
+                    <select id="unitSelect" onchange="changeUnit(this.value)" class="bg-amber-100/70 border border-amber-300 font-bold text-slate-800 text-sm md:text-base rounded-xl px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="cardProgressText" class="text-xs md:text-sm font-bold bg-sky-100 text-sky-800 px-3 py-1 rounded-full">
+                        Card 1 of 19
+                    </span>
+                    <button onclick="shuffleCards()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-xl font-semibold border border-slate-200" title="Shuffle Cards">
+                        <i class="fa-solid fa-shuffle"></i> Shuffle
+                    </button>
+                </div>
+            </div>
+
+            <!-- MAIN FLASHCARD CONTAINER -->
+            <div class="w-full max-w-xl perspective-1000 mb-6">
+                <div id="flashcard" class="bg-white rounded-3xl border-4 border-sky-200 shadow-xl p-6 md:p-8 flex flex-col items-center justify-between min-h-[480px] relative transition-all duration-300">
+                    
+                    <!-- Top Ribbon & Actions -->
+                    <div class="w-full flex justify-between items-center mb-4">
+                        <span id="cardCategory" class="text-xs font-bold uppercase tracking-widest text-sky-600 bg-sky-50 border border-sky-100 px-3 py-1 rounded-full">
+                            School Facility
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="generateAIIllustration()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-full transition-all flex items-center gap-1 border border-amber-200" title="Generate AI Picture with Gemini">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> AI Picture
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Visual Icon / AI Illustration Display -->
+                    <div id="illustrationBox" class="w-32 h-32 md:w-36 md:h-36 bg-gradient-to-br from-sky-50 to-amber-50 rounded-2xl border border-sky-100 flex items-center justify-center text-6xl text-sky-500 mb-4 shadow-inner relative overflow-hidden group">
+                        <i id="wordIcon" class="fa-solid fa-school"></i>
+                        <img id="aiImg" class="absolute inset-0 w-full h-full object-cover hidden" alt="AI Generated Illustration" />
+                        <div id="aiSpinner" class="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center text-sky-600 text-xs font-bold gap-2 hidden">
+                            <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+                            <span>Drawing picture...</span>
+                        </div>
+                    </div>
+
+                    <!-- 2.) Color-Syllabled Word Section -->
+                    <div class="text-center w-full mb-3">
+                        <div id="syllableWordContainer" class="text-3xl md:text-5xl font-extrabold flex flex-wrap justify-center items-center gap-y-1 gap-x-1.5 tracking-tight my-2">
+                            <!-- Populated with color-syllabled html spans -->
+                        </div>
+                        <p class="text-xs text-slate-400 font-medium">Syllables styled in distinct colors</p>
+                    </div>
+
+                    <!-- 3.) English Pronunciation Speaker Button -->
+                    <div class="mb-5 flex flex-col items-center">
+                        <button id="btnEnglishSpeaker" onclick="playEnglishWord()" class="w-14 h-14 bg-sky-500 hover:bg-sky-600 active:scale-95 text-white rounded-full flex items-center justify-center text-2xl shadow-lg shadow-sky-200 transition-all border-4 border-white" title="Listen to English Pronunciation">
+                            <i id="englishSpeakerIcon" class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <span class="text-xs text-sky-700 font-bold mt-1 tracking-wide">Listen English</span>
+                    </div>
+
+                    <!-- 4.) Traditional Chinese Meaning & Cantonese Voice Button -->
+                    <div class="w-full bg-amber-50/80 border border-amber-200/80 rounded-2xl p-3 md:p-4 text-center cursor-pointer hover:bg-amber-100/80 transition-all flex items-center justify-between px-5 mb-5 shadow-sm" onclick="playCantoneseWord()" title="Click to listen in Cantonese">
+                        <div class="text-left font-chinese">
+                            <span class="text-xs text-amber-700 font-bold block uppercase tracking-wider">Traditional Chinese Meaning</span>
+                            <span id="chineseMeaningText" class="text-xl md:text-2xl font-bold text-slate-800">一間課室</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-amber-600">
+                            <span class="text-xs font-bold hidden sm:inline">廣東話</span>
+                            <div class="w-10 h-10 bg-amber-400 text-amber-950 rounded-xl flex items-center justify-center text-lg shadow-sm">
+                                <i id="cantoneseSpeakerIcon" class="fa-solid fa-volume-low"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5.) Sample Sentence with English Highlight Reading & Chinese Translation -->
+                    <div class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                                <i class="fa-solid fa-quote-left text-sky-400"></i> Sample Sentence
+                            </span>
+                            <button id="btnReadSentence" onclick="readSentenceSlowly()" class="text-xs bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                                <i id="sentencePlayIcon" class="fa-solid fa-play"></i>
+                                <span>Read Slowly</span>
+                            </button>
+                        </div>
+                        <p id="sentenceContainer" class="text-base md:text-lg text-slate-700 font-medium leading-relaxed min-h-[2.5rem] flex flex-wrap gap-x-1.5 items-center">
+                            <!-- English sentence words dynamically inserted -->
+                        </p>
+                        
+                        <!-- Chinese Sentence Meaning display -->
+                        <div class="mt-2.5 pt-2 border-t border-slate-200/80 flex items-center justify-between gap-2">
+                            <p id="sentenceChineseContainer" class="text-sm md:text-base text-slate-600 font-chinese font-semibold">
+                                <!-- Chinese sentence translation -->
+                            </p>
+                            <button onclick="playCantoneseSentence()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 border border-amber-200/80 shrink-0" title="Listen to Cantonese Sentence">
+                                <i class="fa-solid fa-volume-low text-amber-600"></i>
+                                <span>廣東話朗讀</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Card Navigation Bar -->
+            <div class="flex items-center gap-4 my-2">
+                <button onclick="prevCard()" class="w-12 h-12 bg-white hover:bg-sky-50 text-sky-600 border-2 border-sky-300 rounded-2xl flex items-center justify-center text-xl shadow-md transition-all active:scale-90" title="Previous Word">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button onclick="nextCard()" class="w-12 h-12 bg-sky-500 hover:bg-sky-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-md shadow-sky-200 transition-all active:scale-90" title="Next Word">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+        </section>
+
+        <!-- TAB 2: MATCHING GAME VIEW -->
+        <section id="tabMatch" class="w-full max-w-3xl flex flex-col items-center hidden">
+            <div class="bg-white p-6 rounded-3xl border-2 border-sky-200 shadow-lg w-full mb-6 text-center">
+                <h2 class="text-2xl font-bold text-sky-900 mb-1">
+                    <i class="fa-solid fa-puzzle-piece text-amber-500 mr-2"></i> Match Word & Chinese Meaning
+                </h2>
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <button id="btnReadMatchInstr" onclick="readMatchingInstructions()" class="w-9 h-9 bg-sky-100 hover:bg-sky-200 active:scale-95 text-sky-700 rounded-full flex items-center justify-center text-sm shadow-sm transition-all" title="Listen to Instructions">
+                        <i id="matchInstrIcon" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <p class="text-sm text-slate-600 font-medium">Click an English word on the left, then click its Traditional Chinese meaning on the right!</p>
+                </div>
+                
+                <div class="flex items-center justify-between bg-sky-50 p-3 rounded-2xl border border-sky-100 mb-6 max-w-md mx-auto">
+                    <div class="text-sm font-bold text-sky-800">
+                        Score: <span id="matchScore" class="text-emerald-600 text-lg">0</span> / <span id="matchTotal">6</span>
+                    </div>
+                    <button onclick="initMatchingGame()" class="text-xs bg-sky-500 hover:bg-sky-600 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Reset Game
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- English Cards Column -->
+                    <div id="matchEnglishCol" class="flex flex-col gap-3"></div>
+                    <!-- Chinese Cards Column -->
+                    <div id="matchChineseCol" class="flex flex-col gap-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SPELLING PRACTICE VIEW -->
+        <section id="tabQuiz" class="w-full max-w-2xl flex flex-col items-center hidden">
+            <div class="bg-white p-6 md:p-8 rounded-3xl border-2 border-sky-200 shadow-lg w-full text-center">
+                <h2 class="text-2xl font-bold text-sky-900 mb-1">
+                    <i class="fa-solid fa-spell-check text-emerald-500 mr-2"></i> Spelling Practice
+                </h2>
+                <p class="text-sm text-slate-500 mb-6">Listen to the word, then type the correct English word or phrase!</p>
+
+                <!-- Speaker audio play -->
+                <div class="mb-6">
+                    <button onclick="playQuizWordAudio()" class="w-16 h-16 bg-amber-400 hover:bg-amber-500 text-amber-950 rounded-full flex items-center justify-center text-2xl shadow-lg mx-auto border-4 border-white transition-all active:scale-95" title="Click to hear target word">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <p class="text-xs text-slate-400 font-bold mt-2">Click to hear the target word</p>
+                </div>
+
+                <!-- Chinese Hint -->
+                <div id="quizChineseHint" class="bg-amber-50 border border-amber-200 text-amber-900 text-xl font-bold font-chinese py-2.5 px-4 rounded-2xl mb-6 inline-block">
+                    --
+                </div>
+
+                <!-- Text Typing Input Slot -->
+                <div class="mb-6 max-w-md mx-auto">
+                    <label for="quizTextInput" class="text-xs text-slate-400 font-bold uppercase tracking-wider block mb-2">Type your answer here:</label>
+                    <input type="text" id="quizTextInput" autocomplete="off" spellcheck="false" placeholder="Type the English word..." onkeydown="if(event.key==='Enter') checkQuizAnswer()" class="w-full text-center text-xl font-bold text-slate-800 bg-slate-50 border-2 border-sky-300 rounded-2xl p-3 focus:outline-none focus:ring-4 focus:ring-sky-200 focus:bg-white transition-all">
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex justify-center gap-3">
+                    <button onclick="clearQuizAnswer()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-sm">
+                        Clear
+                    </button>
+                    <button onclick="checkQuizAnswer()" class="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md">
+                        Submit Answer <i class="fa-solid fa-check ml-1"></i>
+                    </button>
+                </div>
+
+                <div id="quizFeedback" class="mt-4 text-lg font-bold min-h-[2rem]"></div>
+            </div>
+        </section>
+
+        <!-- TAB 4: UNIT & VOCABULARIES MANAGEMENT VIEW -->
+        <section id="tabManage" class="w-full max-w-3xl flex flex-col items-center hidden">
+            <div class="bg-white p-6 rounded-3xl border-2 border-slate-200 shadow-md w-full mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-book-bookmark text-sky-500"></i> Vocabulary Unit Manager
+                    </h2>
+                    <button onclick="toggleAddWordForm()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-sm">
+                        <i class="fa-solid fa-plus mr-1"></i> Add Custom Word
+                    </button>
+                </div>
+
+                <!-- Add Custom Word Modal / Form -->
+                <div id="addWordForm" class="bg-sky-50/70 border border-sky-200 rounded-2xl p-4 mb-6 hidden">
+                    <h3 class="text-sm font-bold text-sky-900 mb-3 flex items-center justify-between">
+                        <span>New Vocabulary Word</span>
+                        <button onclick="aiAssistWordGeneration()" class="text-xs bg-amber-400 text-amber-950 font-bold px-2.5 py-1 rounded-lg hover:bg-amber-500">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto-fill with AI
+                        </button>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">English Phrase / Word</label>
+                            <input type="text" id="inputWord" placeholder="e.g. classroom" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Syllables (separated with hyphens)</label>
+                            <input type="text" id="inputSyllables" placeholder="e.g. class-room" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Traditional Chinese Meaning</label>
+                            <input type="text" id="inputChinese" placeholder="e.g. 課室" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-400 outline-none font-chinese">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Category / Icon</label>
+                            <input type="text" id="inputCategory" placeholder="e.g. School Facility" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-400 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Sample Sentence (English)</label>
+                            <input type="text" id="inputSentence" placeholder="e.g. We have a clean classroom." class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Sample Sentence (Traditional Chinese)</label>
+                            <input type="text" id="inputSentenceChinese" placeholder="e.g. 我們有一個乾淨的課室。" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:ring-2 focus:ring-sky-400 outline-none font-chinese">
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button onclick="toggleAddWordForm()" class="px-3 py-1.5 text-xs text-slate-600 font-bold bg-slate-200 rounded-lg">Cancel</button>
+                        <button onclick="saveCustomWord()" class="px-4 py-1.5 text-xs text-white font-bold bg-emerald-500 hover:bg-emerald-600 rounded-lg shadow-sm">Save Word</button>
+                    </div>
+                </div>
+
+                <!-- Current Words List -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs md:text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                                <th class="p-2.5 rounded-l-xl">Word / Syllables</th>
+                                <th class="p-2.5">Traditional Chinese</th>
+                                <th class="p-2.5">Sample Sentence & Meaning</th>
+                                <th class="p-2.5 rounded-r-xl text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unitWordsTableBody" class="divide-y divide-slate-100">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Audio Speech Settings Modal -->
+    <div id="audioSettingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 border-2 border-sky-300 shadow-2xl relative">
+            <button onclick="toggleAudioSettingsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-lg font-bold text-sky-900 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-sky-500"></i> Speech Synthesis Settings
+            </h3>
+            
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Sentence Reading Speed (Rate)</label>
+                    <div class="flex items-center gap-3">
+                        <input type="range" id="speechRateRange" min="0.4" max="1" step="0.05" value="0.65" onchange="updateSpeechConfig()" class="w-full">
+                        <span id="speechRateValue" class="font-bold text-sky-600 w-12 text-right">0.65x</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-0.5">Slower rate helps primary ESL students follow synchronized text highlighting.</p>
+                </div>
+
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">English Voice Accent</label>
+                    <select id="englishVoiceSelect" onchange="updateSpeechConfig()" class="w-full border border-slate-300 rounded-xl p-2 text-xs">
+                        <option value="">Default English Voice</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Cantonese Voice (廣東話)</label>
+                    <select id="cantoneseVoiceSelect" onchange="updateSpeechConfig()" class="w-full border border-slate-300 rounded-xl p-2 text-xs">
+                        <option value="">Default Cantonese Voice (zh-HK)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="toggleAudioSettingsModal()" class="bg-sky-500 text-white font-bold px-5 py-2 rounded-xl text-sm hover:bg-sky-600">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application State & Script -->
+    <script>
+        // --- 1.) UNIT 1 VOCABULARY DATASET ---
+        // Unit 1: At my school vocabulary items with Chinese sample sentences
+        const defaultUnit1Words = [
+            {
+                id: "w1",
+                word: "a classroom",
+                syllables: ["a", "class", "room"], // word broken down into syllables
+                chinese: "一間課室",
+                sentence: "We have a clean classroom.",
+                sentenceChinese: "我們有一個乾淨的課室。",
+                category: "School Facility",
+                icon: "fa-door-open"
+            },
+            {
+                id: "w2",
+                word: "have lessons",
+                syllables: ["have", "les", "sons"],
+                chinese: "上課",
+                sentence: "We have lessons every morning.",
+                sentenceChinese: "我們每天早上上課。",
+                category: "School Activity",
+                icon: "fa-book-open-reader"
+            },
+            {
+                id: "w3",
+                word: "a music room",
+                syllables: ["a", "mu", "sic", "room"],
+                chinese: "一間音樂室",
+                sentence: "We sing songs in the music room.",
+                sentenceChinese: "我們在音樂室唱歌。",
+                category: "School Facility",
+                icon: "fa-music"
+            },
+            {
+                id: "w4",
+                word: "sing",
+                syllables: ["sing"],
+                chinese: "唱歌",
+                sentence: "I like to sing happy songs.",
+                sentenceChinese: "我喜歡唱快樂的歌曲。",
+                category: "Action",
+                icon: "fa-microphone"
+            },
+            {
+                id: "w5",
+                word: "a computer room",
+                syllables: ["a", "com", "pu", "ter", "room"],
+                chinese: "一間電腦室",
+                sentence: "We visit the computer room to learn.",
+                sentenceChinese: "我們去電腦室學習。",
+                category: "School Facility",
+                icon: "fa-desktop"
+            },
+            {
+                id: "w6",
+                word: "use the computers",
+                syllables: ["use", "the", "com", "pu", "ters"],
+                chinese: "使用電腦",
+                sentence: "We use the computers to play games.",
+                sentenceChinese: "我們使用電腦玩遊戲。",
+                category: "School Activity",
+                icon: "fa-keyboard"
+            },
+            {
+                id: "w7",
+                word: "an art room",
+                syllables: ["an", "art", "room"],
+                chinese: "一間視藝室",
+                sentence: "We draw pictures in the art room.",
+                sentenceChinese: "我們在視藝室畫畫。",
+                category: "School Facility",
+                icon: "fa-palette"
+            },
+            {
+                id: "w8",
+                word: "paint pictures",
+                syllables: ["paint", "pic", "tures"],
+                chinese: "畫畫",
+                sentence: "I paint pictures with bright colors.",
+                sentenceChinese: "我用鮮豔的顏色畫畫。",
+                category: "School Activity",
+                icon: "fa-paint-brush"
+            },
+            {
+                id: "w9",
+                word: "a library",
+                syllables: ["a", "li", "brar", "y"],
+                chinese: "一間圖書館",
+                sentence: "The library is quiet and clean.",
+                sentenceChinese: "圖書館又安靜又乾淨。",
+                category: "School Facility",
+                icon: "fa-book"
+            },
+            {
+                id: "w10",
+                word: "borrow books",
+                syllables: ["bor", "row", "books"],
+                chinese: "借書",
+                sentence: "You can borrow books from the library.",
+                sentenceChinese: "你可以從圖書館借書。",
+                category: "School Activity",
+                icon: "fa-book-bookmark"
+            },
+            {
+                id: "w11",
+                word: "toilets",
+                syllables: ["toi", "lets"],
+                chinese: "洗手洗",
+                sentence: "Please wash hands in the toilets.",
+                sentenceChinese: "請在洗手間洗手。",
+                category: "School Facility",
+                icon: "fa-restroom"
+            },
+            {
+                id: "w12",
+                word: "wash hands",
+                syllables: ["wash", "hands"],
+                chinese: "洗手",
+                sentence: "Always wash hands before eating.",
+                sentenceChinese: "吃東西前記得要洗手。",
+                category: "Action",
+                icon: "fa-soap"
+            },
+            {
+                id: "w13",
+                word: "a lift",
+                syllables: ["a", "lift"],
+                chinese: "一部升降機",
+                sentence: "We take a lift to the third floor.",
+                sentenceChinese: "我們搭乘升降機到三樓。",
+                category: "School Facility",
+                icon: "fa-elevator"
+            },
+            {
+                id: "w14",
+                word: "a playground",
+                syllables: ["a", "play", "ground"],
+                chinese: "一個操場",
+                sentence: "Children run and play in the playground.",
+                sentenceChinese: "孩子們在操場奔跑玩耍。",
+                category: "School Facility",
+                icon: "fa-child-rebounding"
+            },
+            {
+                id: "w15",
+                word: "play games",
+                syllables: ["play", "games"],
+                chinese: "玩遊戲",
+                sentence: "We play games together at recess.",
+                sentenceChinese: "我們在小息時一起玩遊戲。",
+                category: "School Activity",
+                icon: "fa-gamepad"
+            },
+            {
+                id: "w16",
+                word: "a tuck shop",
+                syllables: ["a", "tuck", "shop"],
+                chinese: "一間小食部",
+                sentence: "I buy a drink at the tuck shop.",
+                sentenceChinese: "我在小食部買飲品。",
+                category: "School Facility",
+                icon: "fa-store"
+            },
+            {
+                id: "w17",
+                word: "buy snacks",
+                syllables: ["buy", "snacks"],
+                chinese: "買小食",
+                sentence: "We buy snacks during recess time.",
+                sentenceChinese: "我們在小息時間買小食。",
+                category: "School Activity",
+                icon: "fa-cookie-bite"
+            },
+            {
+                id: "w18",
+                word: "a garden",
+                syllables: ["a", "gar", "den"],
+                chinese: "一個花園",
+                sentence: "There are lovely trees in the garden.",
+                sentenceChinese: "花園裏有美麗的樹木。",
+                category: "School Facility",
+                icon: "fa-tree"
+            },
+            {
+                id: "w19",
+                word: "plant flowers",
+                syllables: ["plant", "flow", "ers"],
+                chinese: "種花",
+                sentence: "We plant flowers in the school garden.",
+                sentenceChinese: "我們在學校的花園種花。",
+                category: "School Activity",
+                icon: "fa-seedling"
+            }
+        ];
+
+        // Syllable color palette mapping
+        const syllableColors = [
+            'text-blue-600',       // Syllable 1
+            'text-amber-600',      // Syllable 2
+            'text-emerald-600',    // Syllable 3
+            'text-purple-600',     // Syllable 4
+            'text-rose-600'        // Syllable 5
+        ];
+
+        // --- GLOBAL APP STATE ---
+        let unitsData = {
+            "unit1": {
+                name: "Unit 1: At my school",
+                words: defaultUnit1Words
+            }
+        };
+
+        let currentUnitKey = "unit1";
+        let currentIndex = 0;
+        let speechRate = 0.65;
+        let selectedEnglishVoice = null;
+        let selectedCantoneseVoice = null;
+        let availableVoices = [];
+
+        // Matching game state
+        let selectedMatchItem = null;
+        let matchScore = 0;
+
+        // Quiz state
+        let quizWord = null;
+        let quizUserAnswer = [];
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initSpeechSynthesis();
+            populateUnitSelect();
+            renderCurrentCard();
+            renderUnitTable();
+        });
+
+        // Initialize Web Speech API Voices
+        function initSpeechSynthesis() {
+            if ('speechSynthesis' in window) {
+                const loadVoices = () => {
+                    availableVoices = window.speechSynthesis.getVoices();
+                    
+                    const enSelect = document.getElementById('englishVoiceSelect');
+                    const cantSelect = document.getElementById('cantoneseVoiceSelect');
+                    
+                    enSelect.innerHTML = '<option value="">Default English Voice</option>';
+                    cantSelect.innerHTML = '<option value="">Default Cantonese Voice (zh-HK)</option>';
+
+                    availableVoices.forEach((voice, index) => {
+                        const opt = document.createElement('option');
+                        opt.value = index;
+                        opt.textContent = `${voice.name} (${voice.lang})`;
+
+                        if (voice.lang.includes('en')) {
+                            enSelect.appendChild(opt);
+                            if (!selectedEnglishVoice && (voice.lang === 'en-US' || voice.lang === 'en-GB')) {
+                                selectedEnglishVoice = voice;
+                                opt.selected = true;
+                            }
+                        } else if (voice.lang.includes('zh-HK') || voice.lang.includes('yue') || voice.lang.includes('zh-TW')) {
+                            cantSelect.appendChild(opt);
+                            if (!selectedCantoneseVoice && (voice.lang.includes('HK') || voice.lang.includes('yue'))) {
+                                selectedCantoneseVoice = voice;
+                                opt.selected = true;
+                            }
+                        }
+                    });
+                };
+
+                loadVoices();
+                if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                    window.speechSynthesis.onvoiceschanged = loadVoices;
+                }
+            }
+        }
+
+        // Populate unit dropdown
+        function populateUnitSelect() {
+            const select = document.getElementById('unitSelect');
+            select.innerHTML = '';
+            for (let key in unitsData) {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = unitsData[key].name;
+                select.appendChild(opt);
+            }
+            select.value = currentUnitKey;
+        }
+
+        function changeUnit(unitKey) {
+            currentUnitKey = unitKey;
+            currentIndex = 0;
+            renderCurrentCard();
+            renderUnitTable();
+        }
+
+        function getCurrentWords() {
+            return unitsData[currentUnitKey].words;
+        }
+
+        // --- FLASHCARD RENDERING LOGIC ---
+        function renderCurrentCard() {
+            const words = getCurrentWords();
+            if (!words || words.length === 0) return;
+
+            const item = words[currentIndex];
+
+            // Progress text
+            document.getElementById('cardProgressText').textContent = `Card ${currentIndex + 1} of ${words.length}`;
+            document.getElementById('cardCategory').textContent = item.category || 'Vocabulary';
+
+            // Reset AI illustration image view
+            document.getElementById('aiImg').classList.add('hidden');
+            document.getElementById('wordIcon').className = `fa-solid ${item.icon || 'fa-school'}`;
+
+            // Render Color-Syllabled Word
+            const syllableContainer = document.getElementById('syllableWordContainer');
+            syllableContainer.innerHTML = '';
+
+            const fullWordString = item.word;
+            const fullSyllables = item.syllables || [item.word];
+
+            fullSyllables.forEach((syl, idx) => {
+                const colorClass = syllableColors[idx % syllableColors.length];
+                
+                const span = document.createElement('span');
+                span.className = `syllable-span ${colorClass}`;
+                span.textContent = syl;
+                syllableContainer.appendChild(span);
+
+                if (idx < fullSyllables.length - 1) {
+                    const combinedSoFar = fullSyllables.slice(0, idx + 1).join('');
+                    if (fullWordString.charAt(combinedSoFar.length) === ' ') {
+                        const spaceSpan = document.createElement('span');
+                        spaceSpan.className = 'w-3 inline-block';
+                        syllableContainer.appendChild(spaceSpan);
+                    }
+                }
+            });
+
+            // Traditional Chinese Meaning
+            document.getElementById('chineseMeaningText').textContent = item.chinese;
+
+            // Sample Sentence English and Chinese
+            renderSentenceWords(item.sentence);
+            renderChineseSentenceWords(item.sentenceChinese || '');
+        }
+
+        // Render sample sentence into individual word spans for highlighting
+        function renderSentenceWords(sentence) {
+            const container = document.getElementById('sentenceContainer');
+            container.innerHTML = '';
+
+            const words = sentence.split(' ');
+            words.forEach((w, idx) => {
+                const span = document.createElement('span');
+                span.id = `sent-word-${idx}`;
+                span.className = 'transition-all duration-200 px-1 py-0.5 rounded';
+                span.textContent = w;
+                container.appendChild(span);
+            });
+        }
+
+        // --- CARD NAVIGATION ---
+        function prevCard() {
+            const words = getCurrentWords();
+            currentIndex = (currentIndex - 1 + words.length) % words.length;
+            renderCurrentCard();
+        }
+
+        function nextCard() {
+            const words = getCurrentWords();
+            currentIndex = (currentIndex + 1) % words.length;
+            renderCurrentCard();
+        }
+
+        function shuffleCards() {
+            const words = getCurrentWords();
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]];
+            }
+            currentIndex = 0;
+            renderCurrentCard();
+        }
+
+        // --- SPEECH SYNTHESIS IMPLEMENTATION ---
+        function playEnglishWord() {
+            const words = getCurrentWords();
+            if (!words[currentIndex]) return;
+            const text = words[currentIndex].word;
+
+            speakText(text, 'en-US', 0.8, () => {
+                const icon = document.getElementById('englishSpeakerIcon');
+                icon.classList.add('speaking-active');
+            }, () => {
+                const icon = document.getElementById('englishSpeakerIcon');
+                icon.classList.remove('speaking-active');
+            });
+        }
+
+        function playCantoneseWord() {
+            const words = getCurrentWords();
+            if (!words[currentIndex]) return;
+            const text = words[currentIndex].chinese;
+
+            speakText(text, 'zh-HK', 0.85, () => {
+                const icon = document.getElementById('cantoneseSpeakerIcon');
+                icon.classList.add('speaking-active');
+            }, () => {
+                const icon = document.getElementById('cantoneseSpeakerIcon');
+                icon.classList.remove('speaking-active');
+            });
+        }
+
+        // Render Chinese sample sentence into individual character spans for reading highlight
+        function renderChineseSentenceWords(sentenceChinese) {
+            const container = document.getElementById('sentenceChineseContainer');
+            container.innerHTML = '';
+            if (!sentenceChinese) return;
+
+            const chars = Array.from(sentenceChinese);
+            chars.forEach((char, idx) => {
+                const span = document.createElement('span');
+                span.id = `zh-sent-word-${idx}`;
+                span.className = 'transition-all duration-150 px-0.5 py-0.5 rounded font-chinese inline-block';
+                span.textContent = char;
+                container.appendChild(span);
+            });
+        }
+
+        function playCantoneseSentence() {
+            const words = getCurrentWords();
+            if (!words[currentIndex]) return;
+            const text = words[currentIndex].sentenceChinese;
+            if (!text) return;
+
+            if (!('speechSynthesis' in window)) {
+                alert('Speech synthesis is not supported in this browser.');
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+
+            const chars = Array.from(text);
+            const cantRate = 0.75;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-HK';
+            utterance.rate = cantRate;
+
+            if (selectedCantoneseVoice) {
+                utterance.voice = selectedCantoneseVoice;
+            }
+
+            let boundaryTriggered = false;
+            let currentCharIdx = 0;
+            let timerFallback = null;
+
+            utterance.onstart = () => {
+                clearChineseSentenceHighlights();
+                const timePerChar = Math.max(260, 320 / cantRate);
+
+                timerFallback = setInterval(() => {
+                    if (!boundaryTriggered && window.speechSynthesis.speaking) {
+                        if (currentCharIdx < chars.length) {
+                            highlightChineseSentenceWord(currentCharIdx);
+                            currentCharIdx++;
+                        }
+                    }
+                }, timePerChar);
+            };
+
+            utterance.onboundary = (event) => {
+                boundaryTriggered = true;
+                if (timerFallback) clearInterval(timerFallback);
+
+                if (event.charIndex !== undefined) {
+                    highlightChineseSentenceWord(event.charIndex);
+                    if (event.charLength && event.charLength > 1) {
+                        for (let i = 1; i < event.charLength; i++) {
+                            highlightChineseSentenceWord(event.charIndex + i);
+                        }
+                    }
+                }
+            };
+
+            const cleanup = () => {
+                if (timerFallback) clearInterval(timerFallback);
+                setTimeout(() => {
+                    clearChineseSentenceHighlights();
+                }, 400);
+            };
+
+            utterance.onend = cleanup;
+            utterance.onerror = cleanup;
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function highlightChineseSentenceWord(charIndex) {
+            clearChineseSentenceHighlights();
+            const targetEl = document.getElementById(`zh-sent-word-${charIndex}`);
+            if (targetEl) {
+                targetEl.classList.add('highlight-word-zh');
+            }
+        }
+
+        function clearChineseSentenceHighlights() {
+            const spans = document.querySelectorAll('#sentenceChineseContainer span');
+            spans.forEach(span => {
+                span.classList.remove('highlight-word-zh');
+            });
+        }
+
+        function readSentenceSlowly() {
+            const words = getCurrentWords();
+            if (!words[currentIndex]) return;
+            
+            const sentence = words[currentIndex].sentence;
+            const btn = document.getElementById('btnReadSentence');
+            const icon = document.getElementById('sentencePlayIcon');
+
+            if (!('speechSynthesis' in window)) {
+                alert('Speech synthesis is not supported in this browser.');
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+
+            const sentenceWords = sentence.split(' ');
+            const wordBounds = [];
+            let pos = 0;
+            sentenceWords.forEach((word, idx) => {
+                const start = pos;
+                const end = pos + word.length;
+                wordBounds.push({ start, end, idx });
+                pos = end + 1;
+            });
+
+            const slowRate = Math.min(speechRate, 0.55);
+            const utterance = new SpeechSynthesisUtterance(sentence);
+            utterance.lang = 'en-US';
+            utterance.rate = slowRate;
+
+            if (selectedEnglishVoice) {
+                utterance.voice = selectedEnglishVoice;
+            }
+
+            let boundaryTriggered = false;
+            let currentWordIdx = 0;
+            let timerFallback = null;
+
+            utterance.onstart = () => {
+                btn.classList.add('bg-amber-500');
+                icon.className = 'fa-solid fa-spinner fa-spin';
+                clearSentenceHighlights();
+
+                const estimatedTotalMs = (sentence.length / 10) * (1 / slowRate) * 1000;
+                const timePerWord = Math.max(420, estimatedTotalMs / sentenceWords.length);
+
+                timerFallback = setInterval(() => {
+                    if (!boundaryTriggered && window.speechSynthesis.speaking) {
+                        if (currentWordIdx < sentenceWords.length) {
+                            highlightSentenceWord(currentWordIdx);
+                            currentWordIdx++;
+                        }
+                    }
+                }, timePerWord);
+            };
+
+            utterance.onboundary = (event) => {
+                if (event.name === 'word') {
+                    boundaryTriggered = true;
+                    if (timerFallback) clearInterval(timerFallback);
+
+                    const charIdx = event.charIndex;
+                    const match = wordBounds.find(b => charIdx >= b.start && charIdx <= b.end + 1);
+                    if (match) {
+                        highlightSentenceWord(match.idx);
+                    } else {
+                        for (let i = 0; i < wordBounds.length; i++) {
+                            if (charIdx <= wordBounds[i].end) {
+                                highlightSentenceWord(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            };
+
+            const cleanup = () => {
+                if (timerFallback) clearInterval(timerFallback);
+                clearSentenceHighlights();
+                btn.classList.remove('bg-amber-500');
+                icon.className = 'fa-solid fa-play';
+            };
+
+            utterance.onend = cleanup;
+            utterance.onerror = cleanup;
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function highlightSentenceWord(wordIndex) {
+            clearSentenceHighlights();
+            const targetEl = document.getElementById(`sent-word-${wordIndex}`);
+            if (targetEl) {
+                targetEl.classList.add('highlight-word');
+            }
+        }
+
+        function clearSentenceHighlights() {
+            const spans = document.querySelectorAll('#sentenceContainer span');
+            spans.forEach(span => {
+                span.classList.remove('highlight-word');
+            });
+        }
+
+        function speakText(text, lang, rate = 0.8, onStartCb, onEndCb) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = rate;
+
+            if (lang.includes('zh') && selectedCantoneseVoice) {
+                utterance.voice = selectedCantoneseVoice;
+            } else if (lang.includes('en') && selectedEnglishVoice) {
+                utterance.voice = selectedEnglishVoice;
+            }
+
+            utterance.onstart = () => { if (onStartCb) onStartCb(); };
+            utterance.onend = () => { if (onEndCb) onEndCb(); };
+            utterance.onerror = () => { if (onEndCb) onEndCb(); };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- AI IMAGE GENERATION VIA GEMINI API ---
+        async function generateAIIllustration() {
+            const words = getCurrentWords();
+            const currentItem = words[currentIndex];
+            if (!currentItem) return;
+
+            const spinner = document.getElementById('aiSpinner');
+            const imgEl = document.getElementById('aiImg');
+            
+            spinner.classList.remove('hidden');
+
+            const promptText = `A bright, cute 3d cartoon illustration for primary school children representing: ${currentItem.word}. Clear, friendly, educational vector art style, colorful background.`;
+
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-image:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{
+                        parts: [{ text: promptText }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ['TEXT', 'IMAGE']
+                    }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if (base64Data) {
+                    imgEl.src = `data:image/png;base64,${base64Data}`;
+                    imgEl.classList.remove('hidden');
+                } else {
+                    alert('Could not generate illustration at this moment.');
+                }
+            } catch (err) {
+                console.error("AI Generation Error: ", err);
+                alert('AI Image generation failed. Please try again.');
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        // --- TAB SWITCHING & MATCHING / QUIZ MODES ---
+        function switchTab(tab) {
+            document.getElementById('tabCards').classList.add('hidden');
+            document.getElementById('tabMatch').classList.add('hidden');
+            document.getElementById('tabQuiz').classList.add('hidden');
+            document.getElementById('tabManage').classList.add('hidden');
+
+            document.getElementById('btnNavCards').className = 'px-3.5 py-1.5 rounded-xl font-semibold text-sm text-slate-600 hover:text-sky-600 transition-all';
+            document.getElementById('btnNavMatch').className = 'px-3.5 py-1.5 rounded-xl font-semibold text-sm text-slate-600 hover:text-sky-600 transition-all';
+            document.getElementById('btnNavQuiz').className = 'px-3.5 py-1.5 rounded-xl font-semibold text-sm text-slate-600 hover:text-sky-600 transition-all';
+            document.getElementById('btnNavManage').className = 'px-3.5 py-1.5 rounded-xl font-semibold text-sm text-slate-600 hover:text-sky-600 transition-all';
+
+            if (tab === 'cards') {
+                document.getElementById('tabCards').classList.remove('hidden');
+                document.getElementById('btnNavCards').className = 'px-3.5 py-1.5 rounded-xl font-semibold text-sm bg-sky-500 text-white shadow-sm';
+            } else if (tab === 'match') {
+                document.getElementById('tabMatch').classList.remove('hidden');
+                document.getElementById('btnNavMatch').className = 'px-3.5 py-1.5 rounded-xl font-semibold text-sm bg-sky-500 text-white shadow-sm';
+                initMatchingGame();
+                readMatchingInstructions();
+            } else if (tab === 'quiz') {
+                document.getElementById('tabQuiz').classList.remove('hidden');
+                document.getElementById('btnNavQuiz').className = 'px-3.5 py-1.5 rounded-xl font-semibold text-sm bg-sky-500 text-white shadow-sm';
+                initQuizGame();
+            } else if (tab === 'manage') {
+                document.getElementById('tabManage').classList.remove('hidden');
+                document.getElementById('btnNavManage').className = 'px-3.5 py-1.5 rounded-xl font-semibold text-sm bg-sky-500 text-white shadow-sm';
+            }
+        }
+
+        // Matching Game
+        function readMatchingInstructions() {
+            const text = "Click an English word on the left, then click its Traditional Chinese meaning on the right!";
+            const icon = document.getElementById('matchInstrIcon');
+            speakText(text, 'en-US', 0.85, () => {
+                if (icon) icon.classList.add('speaking-active');
+            }, () => {
+                if (icon) icon.classList.remove('speaking-active');
+            });
+        }
+
+        function initMatchingGame() {
+            const words = [...getCurrentWords()].sort(() => 0.5 - Math.random()).slice(0, 6);
+            matchScore = 0;
+            selectedMatchItem = null;
+
+            document.getElementById('matchScore').textContent = '0';
+            document.getElementById('matchTotal').textContent = words.length;
+
+            const englishCol = document.getElementById('matchEnglishCol');
+            const chineseCol = document.getElementById('matchChineseCol');
+
+            englishCol.innerHTML = '';
+            chineseCol.innerHTML = '';
+
+            const shuffledEnglish = [...words].sort(() => 0.5 - Math.random());
+            const shuffledChinese = [...words].sort(() => 0.5 - Math.random());
+
+            shuffledEnglish.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full bg-slate-50 hover:bg-sky-50 border-2 border-slate-200 text-slate-800 font-bold p-3 rounded-2xl text-base text-left transition-all shadow-sm flex items-center justify-between';
+                btn.dataset.id = item.id;
+                btn.innerHTML = `<span>${item.word}</span> <i class="fa-solid fa-volume-low text-sky-400" onclick="event.stopPropagation(); speakText('${item.word}', 'en-US');"></i>`;
+                btn.onclick = () => handleMatchSelect('en', item, btn);
+                englishCol.appendChild(btn);
+            });
+
+            shuffledChinese.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full bg-slate-50 hover:bg-amber-50 border-2 border-slate-200 text-slate-800 font-bold p-3 rounded-2xl text-base font-chinese text-left transition-all shadow-sm flex items-center justify-between';
+                btn.dataset.id = item.id;
+                btn.innerHTML = `<span>${item.chinese}</span> <i class="fa-solid fa-volume-low text-amber-500" onclick="event.stopPropagation(); speakText('${item.chinese}', 'zh-HK');"></i>`;
+                btn.onclick = () => handleMatchSelect('zh', item, btn);
+                chineseCol.appendChild(btn);
+            });
+        }
+
+        function handleMatchSelect(type, item, btnEl) {
+            if (btnEl.disabled) return;
+
+            if (!selectedMatchItem) {
+                selectedMatchItem = { type, item, btnEl };
+                btnEl.classList.add('border-sky-500', 'bg-sky-100');
+            } else {
+                if (selectedMatchItem.type === type) {
+                    selectedMatchItem.btnEl.classList.remove('border-sky-500', 'bg-sky-100');
+                    selectedMatchItem = { type, item, btnEl };
+                    btnEl.classList.add('border-sky-500', 'bg-sky-100');
+                } else {
+                    if (selectedMatchItem.item.id === item.id) {
+                        btnEl.className = 'w-full bg-emerald-100 border-2 border-emerald-400 text-emerald-900 font-bold p-3 rounded-2xl text-base text-left flex items-center justify-between';
+                        selectedMatchItem.btnEl.className = 'w-full bg-emerald-100 border-2 border-emerald-400 text-emerald-900 font-bold p-3 rounded-2xl text-base text-left flex items-center justify-between';
+                        
+                        btnEl.disabled = true;
+                        selectedMatchItem.btnEl.disabled = true;
+
+                        matchScore++;
+                        document.getElementById('matchScore').textContent = matchScore;
+                        speakText('Good job!', 'en-US');
+
+                        selectedMatchItem = null;
+                    } else {
+                        btnEl.classList.add('border-rose-400', 'bg-rose-100');
+                        selectedMatchItem.btnEl.classList.add('border-rose-400', 'bg-rose-100');
+
+                        setTimeout(() => {
+                            btnEl.classList.remove('border-rose-400', 'bg-rose-100');
+                            selectedMatchItem.btnEl.classList.remove('border-rose-400', 'bg-rose-100', 'border-sky-500', 'bg-sky-100');
+                            selectedMatchItem = null;
+                        }, 700);
+                    }
+                }
+            }
+        }
+
+        // Quiz Logic (Typing Practice)
+        function initQuizGame() {
+            const words = getCurrentWords();
+            quizWord = words[Math.floor(Math.random() * words.length)];
+
+            document.getElementById('quizChineseHint').textContent = quizWord.chinese;
+            document.getElementById('quizFeedback').textContent = '';
+
+            const inputEl = document.getElementById('quizTextInput');
+            if (inputEl) {
+                inputEl.value = '';
+                setTimeout(() => inputEl.focus(), 100);
+            }
+
+            playQuizWordAudio();
+        }
+
+        function clearQuizAnswer() {
+            const inputEl = document.getElementById('quizTextInput');
+            if (inputEl) inputEl.value = '';
+            document.getElementById('quizFeedback').textContent = '';
+        }
+
+        function checkQuizAnswer() {
+            const inputEl = document.getElementById('quizTextInput');
+            if (!inputEl) return;
+
+            const userStr = inputEl.value.trim().toLowerCase().replace(/\s+/g, ' ');
+            const targetStr = quizWord.word.trim().toLowerCase().replace(/\s+/g, ' ');
+
+            const feedback = document.getElementById('quizFeedback');
+            if (userStr === targetStr) {
+                feedback.className = 'mt-4 text-lg font-bold text-emerald-600 animate-bounce';
+                feedback.textContent = '🎉 Excellent! Correct Spelling!';
+                speakText(quizWord.word, 'en-US');
+                setTimeout(() => {
+                    initQuizGame();
+                }, 1800);
+            } else {
+                feedback.className = 'mt-4 text-lg font-bold text-rose-500';
+                feedback.textContent = '❌ Try again! Keep going!';
+            }
+        }
+
+        function playQuizWordAudio() {
+            if (quizWord) {
+                speakText(quizWord.word, 'en-US');
+            }
+        }
+
+        // --- UNIT VOCABULARY MANAGEMENT LOGIC ---
+        function renderUnitTable() {
+            const tbody = document.getElementById('unitWordsTableBody');
+            tbody.innerHTML = '';
+
+            const words = getCurrentWords();
+            words.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+
+                const sylHTML = item.syllables.map((s, i) => `<span class="${syllableColors[i % syllableColors.length]} font-bold">${s}</span>`).join('');
+
+                tr.innerHTML = `
+                    <td class="p-2.5">
+                        <div class="font-bold text-slate-800">${item.word}</div>
+                        <div class="text-xs">${sylHTML}</div>
+                    </td>
+                    <td class="p-2.5 font-chinese font-bold text-slate-700">${item.chinese}</td>
+                    <td class="p-2.5 text-slate-600 text-xs">
+                        <div class="font-medium text-slate-800">${item.sentence}</div>
+                        <div class="font-chinese text-slate-500 mt-0.5">${item.sentenceChinese || ''}</div>
+                    </td>
+                    <td class="p-2.5 text-center">
+                        <button onclick="deleteWord(${idx})" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Word">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleAddWordForm() {
+            const form = document.getElementById('addWordForm');
+            form.classList.toggle('hidden');
+        }
+
+        function saveCustomWord() {
+            const word = document.getElementById('inputWord').value.trim();
+            const sylInput = document.getElementById('inputSyllables').value.trim();
+            const chinese = document.getElementById('inputChinese').value.trim();
+            const category = document.getElementById('inputCategory').value.trim() || 'Custom';
+            const sentence = document.getElementById('inputSentence').value.trim();
+            const sentenceChinese = document.getElementById('inputSentenceChinese').value.trim();
+
+            if (!word || !chinese || !sentence) {
+                alert('Please fill in word, Traditional Chinese meaning, and sample sentence.');
+                return;
+            }
+
+            const syllables = sylInput ? sylInput.split('-') : [word];
+
+            const newObj = {
+                id: 'custom_' + Date.now(),
+                word,
+                syllables,
+                chinese,
+                category,
+                sentence,
+                sentenceChinese,
+                icon: 'fa-star'
+            };
+
+            getCurrentWords().push(newObj);
+            renderUnitTable();
+            renderCurrentCard();
+            toggleAddWordForm();
+
+            // Clear form
+            document.getElementById('inputWord').value = '';
+            document.getElementById('inputSyllables').value = '';
+            document.getElementById('inputChinese').value = '';
+            document.getElementById('inputCategory').value = '';
+            document.getElementById('inputSentence').value = '';
+            document.getElementById('inputSentenceChinese').value = '';
+        }
+
+        function deleteWord(idx) {
+            const words = getCurrentWords();
+            if (words.length <= 1) {
+                alert('Unit must have at least one vocabulary item.');
+                return;
+            }
+            words.splice(idx, 1);
+            if (currentIndex >= words.length) currentIndex = 0;
+            renderUnitTable();
+            renderCurrentCard();
+        }
+
+        // Auto-fill using Gemini API for new custom words
+        async function aiAssistWordGeneration() {
+            const wordInput = document.getElementById('inputWord').value.trim();
+            if (!wordInput) {
+                alert('Please enter an English word first!');
+                return;
+            }
+
+            try {
+                const systemPrompt = "You are a primary English teacher for Hong Kong students. Given an English word or phrase, return a JSON object with: syllables (array of syllable strings), chinese (Traditional Chinese translation), sentence (simple English sample sentence for P1-P3 students), and sentenceChinese (Traditional Chinese translation of the sample sentence).";
+                
+                const payload = {
+                    contents: [{ parts: [{ text: `Generate details for word: "${wordInput}"` }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                syllables: { type: "ARRAY", items: { type: "STRING" } },
+                                chinese: { type: "STRING" },
+                                sentence: { type: "STRING" },
+                                sentenceChinese: { type: "STRING" }
+                            },
+                            required: ["syllables", "chinese", "sentence", "sentenceChinese"]
+                        }
+                    },
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (jsonText) {
+                    const data = JSON.parse(jsonText);
+                    document.getElementById('inputSyllables').value = data.syllables.join('-');
+                    document.getElementById('inputChinese').value = data.chinese;
+                    document.getElementById('inputSentence').value = data.sentence;
+                    document.getElementById('inputSentenceChinese').value = data.sentenceChinese || '';
+                }
+            } catch (e) {
+                console.error(e);
+                alert('AI auto-fill failed. You can enter the details manually.');
+            }
+        }
+
+        // Modal Controls
+        function toggleAudioSettingsModal() {
+            const modal = document.getElementById('audioSettingsModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function updateSpeechConfig() {
+            const rateVal = document.getElementById('speechRateRange').value;
+            speechRate = parseFloat(rateVal);
+            document.getElementById('speechRateValue').textContent = rateVal + 'x';
+
+            const enIdx = document.getElementById('englishVoiceSelect').value;
+            if (enIdx !== "") {
+                selectedEnglishVoice = availableVoices[parseInt(enIdx)];
+            }
+
+            const cantIdx = document.getElementById('cantoneseVoiceSelect').value;
+            if (cantIdx !== "") {
+                selectedCantoneseVoice = availableVoices[parseInt(cantIdx)];
+            }
+        }
+    </script>
+</body>
+</html>
