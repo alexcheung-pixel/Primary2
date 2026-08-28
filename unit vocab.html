@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Primary English Vocabulary Master - iPad Edition</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                        syl1: { bg: '#dbeafe', text: '#1e40af', border: '#93c5fd' }, // Blue
+                        syl2: { bg: '#fce7f3', text: '#9d174d', border: '#fbcfe8' }, // Pink
+                        syl3: { bg: '#fef3c7', text: '#92400e', border: '#fde68a' }, // Amber
+                        syl4: { bg: '#d1fae5', text: '#065f46', border: '#a7f3d0' }, // Emerald
+                        syl5: { bg: '#e0e7ff', text: '#3730a3', border: '#c7d2fe' }, // Indigo
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 50%, #fce7f3 100%);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        .heading-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .ipad-container {
+            max-width: 1180px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+        }
+
+        .card-flip-inner {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-flip-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Glassmorphism styling */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Syllable palette classes */
+        .syl-c0 { background-color: #dbeafe; color: #1e3a8a; border-color: #93c5fd; }
+        .syl-c1 { background-color: #fce7f3; color: #831843; border-color: #fbcfe8; }
+        .syl-c2 { background-color: #fef3c7; color: #78350f; border-color: #fde68a; }
+        .syl-c3 { background-color: #d1fae5; color: #064e3b; border-color: #a7f3d0; }
+        .syl-c4 { background-color: #ede9fe; color: #4c1d95; border-color: #ddd6fe; }
+
+        /* Bounce keyframes */
+        @keyframes pulse-gentle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+        .animate-pulse-gentle {
+            animation: pulse-gentle 2.5s infinite ease-in-out;
+        }
+
+        .clickable-word {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-block;
+            border-bottom: 2px dashed transparent;
+        }
+        .clickable-word:hover {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        .clickable-word:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="p-2 sm:p-4 text-slate-800">
+
+    <div class="ipad-container justify-between space-y-4">
+
+        <!-- Top Navigation Bar -->
+        <header class="glass-panel rounded-3xl p-4 shadow-lg flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white text-2xl shadow-md transform hover:rotate-6 transition-transform">
+                    <i class="fa-solid me-0 fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="heading-font text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        Vocab Master Primary
+                    </h1>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-500">Interactive English & Standard Cantonese Learning</p>
+                </div>
+            </div>
+
+            <!-- Header Controls & Badges -->
+            <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
+                <!-- Stars Counter -->
+                <div class="flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-800 px-3 py-1.5 rounded-full shadow-sm font-bold text-sm">
+                    <i class="fa-solid fa-star text-amber-500 text-lg animate-bounce"></i>
+                    <span id="star-count">0</span>
+                </div>
+
+                <!-- Unit Selector Dropdown -->
+                <select id="unit-select" class="bg-white border-2 border-indigo-200 rounded-2xl px-3 py-2 font-bold text-indigo-900 shadow-sm focus:outline-none focus:border-indigo-500 cursor-pointer text-sm sm:text-base">
+                    <!-- Dynamic Units populated here -->
+                </select>
+
+                <!-- Add Unit Button -->
+                <button id="btn-open-add-unit" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold px-3 py-2 sm:px-4 sm:py-2 rounded-2xl shadow-md hover:brightness-105 active:scale-95 transition flex items-center gap-2 text-sm">
+                    <i class="fa-solid fa-plus text-base"></i>
+                    <span class="hidden sm:inline">Add Unit</span>
+                </button>
+
+                <!-- API Key Settings -->
+                <button id="btn-open-settings" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold p-2.5 rounded-2xl shadow-sm transition active:scale-95" title="Settings / API Key">
+                    <i class="fa-solid fa-gear text-lg"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab Navigation Bar -->
+        <nav class="flex items-center justify-center bg-white/70 backdrop-blur-md rounded-2xl p-1.5 shadow-sm border border-white/50 max-w-2xl mx-auto w-full">
+            <button id="tab-flashcard" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 bg-indigo-600 text-white shadow-md">
+                <i class="fa-solid fa-id-card"></i> Flashcards
+            </button>
+            <button id="tab-syllable-game" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-puzzle-piece"></i> Syllable Game
+            </button>
+            <button id="tab-spelling-game" class="tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-spell-check"></i> Spelling Game
+            </button>
+        </nav>
+
+        <!-- Main View Area -->
+        <main class="flex-1 flex flex-col items-center justify-center">
+
+            <!-- FLASHCARD SECTION -->
+            <section id="view-flashcards" class="w-full flex flex-col items-center space-y-4 my-2">
+                
+                <!-- Progress & Navigation Controls -->
+                <div class="flex items-center justify-between w-full max-w-2xl px-2">
+                    <!-- Word Previous Box -->
+                    <button id="btn-prev-card" class="px-4 py-2 rounded-2xl bg-white hover:bg-indigo-50 text-indigo-700 shadow-md border-2 border-indigo-200 font-extrabold active:scale-95 transition flex items-center gap-2 text-sm sm:text-base">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Previous</span>
+                    </button>
+
+                    <span id="card-counter" class="text-sm font-extrabold text-indigo-800 bg-indigo-100 px-4 py-1.5 rounded-full border border-indigo-200">
+                        Word 1 / 19
+                    </span>
+
+                    <!-- Word Next Box -->
+                    <button id="btn-next-card" class="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md font-extrabold active:scale-95 transition flex items-center gap-2 text-sm sm:text-base">
+                        <span>Next</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Main Card Container -->
+                <div class="w-full max-w-2xl h-[480px] sm:h-[460px] perspective-1000">
+                    <div id="flashcard-inner" class="card-flip-inner relative w-full h-full rounded-3xl glass-panel shadow-2xl p-6 flex flex-col justify-between border-2 border-white/80">
+                        
+                        <!-- Top Row: Audio & Syllables Legend -->
+                        <div class="flex justify-between items-center w-full">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                <i class="fa-solid fa-volume-high text-indigo-400"></i> Syllable Color Breakdown
+                            </span>
+                            <button id="btn-speak-word" class="bg-indigo-600 hover:bg-indigo-700 active:scale-90 transition text-white px-4 py-2.5 rounded-2xl shadow-lg flex items-center gap-2 font-bold text-sm">
+                                <i class="fa-solid fa-volume-high text-lg"></i>
+                                <span>Listen</span>
+                            </button>
+                        </div>
+
+                        <!-- Center Word Display with Syllables -->
+                        <div class="flex-1 flex flex-col items-center justify-center my-4 space-y-4">
+                            <!-- Color-Syllabled Word Container -->
+                            <div id="card-syllables-container" class="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 p-2">
+                                <!-- Populated dynamically -->
+                            </div>
+
+                            <!-- Traditional Chinese Meaning Button -->
+                            <div class="pt-2">
+                                <button id="btn-speak-chinese" class="group bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 hover:border-amber-400 px-6 py-3 rounded-2xl shadow-md transition flex items-center gap-3 active:scale-95">
+                                    <div class="w-8 h-8 rounded-full bg-amber-400 text-white flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">
+                                        粵
+                                    </div>
+                                    <span id="card-chinese-text" class="text-2xl font-bold text-amber-900 tracking-wide">
+                                        一間課室
+                                    </span>
+                                    <i class="fa-solid fa-volume-low text-amber-600 text-lg ml-1 group-hover:animate-pulse"></i>
+                                </button>
+                                <p class="text-center text-xs font-semibold text-amber-700/70 mt-1">Click Chinese to hear Standard Cantonese</p>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Box: Interactive Sample Sentence -->
+                        <div class="bg-indigo-50/80 rounded-2xl p-4 border border-indigo-100 flex flex-col space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-indigo-500 uppercase tracking-wider">Sample Sentence</span>
+                                <button id="btn-speak-sentence" class="text-indigo-600 hover:text-indigo-800 text-sm font-bold flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-xl shadow-sm border border-indigo-100 transition active:scale-95">
+                                    <i class="fa-solid fa-circle-play text-indigo-500"></i> Read Sentence
+                                </button>
+                            </div>
+
+                            <!-- Interactive Clickable English Sentence -->
+                            <p id="card-sentence-english" class="text-lg sm:text-xl font-bold text-slate-700 leading-snug">
+                                <!-- Clickable word spans inserted dynamically -->
+                            </p>
+
+                            <!-- Chinese Sentence with Cantonese TTS Button -->
+                            <div class="flex items-center justify-between pt-1 border-t border-indigo-100/60">
+                                <span id="card-sentence-chinese" class="text-base font-semibold text-slate-600">
+                                    我們在一間課室裏一起學習。
+                                </span>
+                                <button id="btn-speak-sentence-chinese" class="text-amber-700 hover:text-amber-900 text-xs font-bold flex items-center gap-1 bg-amber-100 px-2 py-1 rounded-lg transition active:scale-95">
+                                    <i class="fa-solid fa-volume-low"></i> 粵語對譯
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Word Selection Grid Thumbnails -->
+                <div id="word-thumbnails" class="w-full max-w-2xl flex items-center gap-2 overflow-x-auto py-2 px-1">
+                    <!-- Dynamic mini pills -->
+                </div>
+
+            </section>
+
+            <!-- SYLLABLE GAME SECTION -->
+            <section id="view-syllable-game" class="w-full max-w-3xl flex flex-col items-center space-y-5 my-2 hidden">
+                <div class="glass-panel w-full rounded-3xl p-6 shadow-xl space-y-5 border-2 border-white relative">
+                    
+                    <!-- Set Progress Header -->
+                    <div class="flex items-center justify-between bg-purple-100/70 border border-purple-200 px-4 py-2 rounded-2xl">
+                        <div class="flex items-center gap-2">
+                            <span id="syl-set-badge" class="bg-purple-600 text-white font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">Set 1 of 4</span>
+                            <span id="syl-word-progress" class="text-sm font-bold text-purple-900">Word 1 / 5</span>
+                        </div>
+                        <div id="syl-progress-dots" class="flex items-center gap-1.5">
+                            <!-- Progress indicators -->
+                        </div>
+                    </div>
+
+                    <!-- Game Header Banner -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-purple-500 text-white flex items-center justify-center font-bold text-xl shadow">
+                                <i class="fa-solid fa-puzzle-piece"></i>
+                            </div>
+                            <div>
+                                <h2 class="heading-font text-2xl font-bold text-purple-900">Syllable Builder Game</h2>
+                                <p class="text-xs text-slate-500 font-semibold">Assemble words in Set of 5!</p>
+                            </div>
+                        </div>
+                        <button id="btn-audio-syllable-prompt" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-2xl font-bold shadow flex items-center gap-2 active:scale-95 transition text-sm">
+                            <i class="fa-solid fa-volume-high"></i> Hear Word
+                        </button>
+                    </div>
+
+                    <!-- Visual Guidance Prompt -->
+                    <div class="text-center py-2 bg-purple-50/80 rounded-2xl border border-purple-100">
+                        <span id="syllable-game-hint-chinese" class="text-xl font-bold text-purple-900">
+                            一間課室
+                        </span>
+                        <p class="text-xs text-purple-600 font-semibold mt-0.5">Tap colored syllable tiles to build the word!</p>
+                    </div>
+
+                    <!-- Target Slots Area (Kept in single contiguous word structures) -->
+                    <div id="syllable-target-zone" class="min-h-[100px] bg-white/80 rounded-2xl p-4 border-2 border-dashed border-purple-300 flex flex-wrap items-center justify-center gap-x-6 gap-y-4 shadow-inner">
+                        <!-- Placed syllable tiles grouped contiguous in words show here -->
+                    </div>
+
+                    <!-- Distractor Tile Choices Pool -->
+                    <div>
+                        <p class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2 text-center">Available Syllable Tiles (Includes Distractors)</p>
+                        <div id="syllable-choice-pool" class="flex flex-wrap items-center justify-center gap-3 p-3 bg-slate-100/70 rounded-2xl min-h-[80px]">
+                            <!-- Shuffled options with distractors -->
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-between pt-2">
+                        <button id="btn-syllable-reset" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl active:scale-95 transition text-sm">
+                            <i class="fa-solid fa-rotate-left"></i> Reset
+                        </button>
+                        <button id="btn-syllable-check" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-base rounded-2xl shadow-lg hover:brightness-105 active:scale-95 transition flex items-center gap-2">
+                            <span>Check Answer</span>
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+
+                    <!-- SET COMPLETION OVERLAY MODAL -->
+                    <div id="syl-set-complete-modal" class="absolute inset-0 bg-white/95 backdrop-blur-md rounded-3xl p-6 flex flex-col items-center justify-center text-center space-y-5 border-4 border-purple-300 shadow-2xl z-20 hidden">
+                        <div class="w-20 h-20 bg-gradient-to-tr from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-4xl shadow-lg animate-bounce">
+                            🏆
+                        </div>
+                        <div>
+                            <h3 id="syl-complete-title" class="heading-font text-3xl font-extrabold text-purple-900">Set 1 Completed!</h3>
+                            <p class="text-sm font-semibold text-slate-600 mt-1">Outstanding! You mastered all 5 words in this set!</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md pt-2">
+                            <button id="btn-syl-revise-set" class="flex-1 py-3 px-4 bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-300 font-bold rounded-2xl active:scale-95 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-rotate-left"></i>
+                                <span>Revise Set Again</span>
+                            </button>
+                            <button id="btn-syl-next-set" class="flex-1 py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-2xl shadow-lg hover:brightness-105 active:scale-95 transition flex items-center justify-center gap-2">
+                                <span>Challenge Next Set</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SPELLING GAME SECTION -->
+            <section id="view-spelling-game" class="w-full max-w-3xl flex flex-col items-center space-y-5 my-2 hidden">
+                <div class="glass-panel w-full rounded-3xl p-6 shadow-xl space-y-5 border-2 border-white relative">
+                    
+                    <!-- Set Progress Header -->
+                    <div class="flex items-center justify-between bg-teal-100/70 border border-teal-200 px-4 py-2 rounded-2xl">
+                        <div class="flex items-center gap-2">
+                            <span id="spell-set-badge" class="bg-teal-600 text-white font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider">Set 1 of 4</span>
+                            <span id="spell-word-progress" class="text-sm font-bold text-teal-900">Word 1 / 5</span>
+                        </div>
+                        <div id="spell-progress-dots" class="flex items-center gap-1.5">
+                            <!-- Progress indicators -->
+                        </div>
+                    </div>
+
+                    <!-- Header -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-teal-500 text-white flex items-center justify-center font-bold text-xl shadow">
+                                <i class="fa-solid fa-spell-check"></i>
+                            </div>
+                            <div>
+                                <h2 class="heading-font text-2xl font-bold text-teal-900">Super Speller Game</h2>
+                                <p class="text-xs text-slate-500 font-semibold">Spell expression in 5-word sets!</p>
+                            </div>
+                        </div>
+                        <button id="btn-audio-spelling-prompt" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-2xl font-bold shadow flex items-center gap-2 active:scale-95 transition text-sm">
+                            <i class="fa-solid fa-volume-high"></i> Hear Word
+                        </button>
+                    </div>
+
+                    <!-- Chinese Meaning Display -->
+                    <div class="text-center py-2 bg-teal-50/80 rounded-2xl border border-teal-100">
+                        <span id="spelling-game-hint-chinese" class="text-xl font-bold text-teal-900">
+                            一間課室
+                        </span>
+                    </div>
+
+                    <!-- Letter Slots Grouped by Individual Words -->
+                    <div id="spelling-words-container" class="min-h-[100px] bg-white/80 rounded-2xl p-4 border-2 border-dashed border-teal-300 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 shadow-inner">
+                        <!-- Multi-word letter boxes rendered here -->
+                    </div>
+
+                    <!-- Letter Pool Choices (With Distractors) -->
+                    <div>
+                        <p class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2 text-center">Letter Tiles (Includes Extra Distractor Letters)</p>
+                        <div id="spelling-letter-pool" class="flex flex-wrap items-center justify-center gap-2 p-3 bg-slate-100/70 rounded-2xl min-h-[80px]">
+                            <!-- Shuffled letter buttons -->
+                        </div>
+                    </div>
+
+                    <!-- Game Controls -->
+                    <div class="flex items-center justify-between pt-2">
+                        <button id="btn-spelling-reset" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl active:scale-95 transition text-sm">
+                            <i class="fa-solid fa-rotate-left"></i> Clear All
+                        </button>
+                        <button id="btn-spelling-check" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold text-base rounded-2xl shadow-lg hover:brightness-105 active:scale-95 transition flex items-center gap-2">
+                            <span>Check Spelling</span>
+                            <i class="fa-solid fa-circle-check"></i>
+                        </button>
+                    </div>
+
+                    <!-- SET COMPLETION OVERLAY MODAL -->
+                    <div id="spell-set-complete-modal" class="absolute inset-0 bg-white/95 backdrop-blur-md rounded-3xl p-6 flex flex-col items-center justify-center text-center space-y-5 border-4 border-teal-300 shadow-2xl z-20 hidden">
+                        <div class="w-20 h-20 bg-gradient-to-tr from-teal-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-4xl shadow-lg animate-bounce">
+                            🌟
+                        </div>
+                        <div>
+                            <h3 id="spell-complete-title" class="heading-font text-3xl font-extrabold text-teal-900">Set 1 Completed!</h3>
+                            <p class="text-sm font-semibold text-slate-600 mt-1">Superb spelling! You completed all 5 words in this set!</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md pt-2">
+                            <button id="btn-spell-revise-set" class="flex-1 py-3 px-4 bg-teal-100 hover:bg-teal-200 text-teal-900 border-2 border-teal-300 font-bold rounded-2xl active:scale-95 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-rotate-left"></i>
+                                <span>Revise Set Again</span>
+                            </button>
+                            <button id="btn-spell-next-set" class="flex-1 py-3 px-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold rounded-2xl shadow-lg hover:brightness-105 active:scale-95 transition flex items-center justify-center gap-2">
+                                <span>Challenge Next Set</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Gamified Mascot Feedback Footer Bar -->
+        <footer class="glass-panel rounded-3xl p-4 shadow-md flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 text-white flex items-center justify-center text-2xl shadow-lg animate-pulse-gentle">
+                    <i class="fa-solid fa-owl text-yellow-300"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-indigo-500 uppercase tracking-wider">Teacher Ollie says:</span>
+                    <p id="mascot-speech" class="text-sm font-extrabold text-slate-700">
+                        "Great job learning English today! Click 'Listen' to hear standard pronunciations!"
+                    </p>
+                </div>
+            </div>
+            <button id="btn-repeat-mascot-speech" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 p-2.5 rounded-2xl text-xs font-bold transition flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-comment-dots text-base"></i>
+                <span class="hidden sm:inline">Repeat</span>
+            </button>
+        </footer>
+
+    </div>
+
+    <!-- MODAL: ADD CUSTOM UNIT -->
+    <div id="modal-add-unit" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4 border-2 border-indigo-100">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="heading-font text-2xl font-bold text-indigo-900">Add New Learning Unit</h3>
+                <button id="btn-close-add-unit" class="text-slate-400 hover:text-slate-600 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-500 font-semibold">
+                Just enter the unit title and vocabulary words list! AI will automatically generate Chinese meanings, syllable breakdowns, and sample sentences following Unit 1 format.
+            </p>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Unit Title</label>
+                    <input id="input-unit-title" type="text" placeholder="e.g. Unit 2: My Favorite Foods" class="w-full border-2 border-slate-200 rounded-2xl p-3 font-bold text-slate-800 focus:border-indigo-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Vocabulary List (Comma or Line Separated)</label>
+                    <textarea id="input-unit-words" rows="5" placeholder="an apple, eat breakfast, a restaurant, drink milk, delicious pizza" class="w-full border-2 border-slate-200 rounded-2xl p-3 font-semibold text-slate-800 focus:border-indigo-500 focus:outline-none text-sm"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button id="btn-cancel-add-unit" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition">Cancel</button>
+                <button id="btn-submit-add-unit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Generate Unit</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: SETTINGS & GEMINI API KEY -->
+    <div id="modal-settings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border-2 border-indigo-100">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="heading-font text-xl font-bold text-slate-800">API Settings</h3>
+                <button id="btn-close-settings" class="text-slate-400 hover:text-slate-600 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-500">
+                Gemini API Key is used for high-quality humanized voice generation and custom unit creation. If empty, standard browser voices and fallback generators will be used automatically.
+            </p>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Gemini API Key (Optional)</label>
+                <input id="input-api-key" type="password" placeholder="AIzaSy..." class="w-full border-2 border-slate-200 rounded-2xl p-3 font-mono text-sm focus:border-indigo-500 focus:outline-none">
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button id="btn-save-settings" class="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-2xl shadow transition">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_UNIT_1 = {
+            id: 'unit-1',
+            title: 'Unit 1: At my school',
+            words: [
+                {
+                    id: 'u1_w1',
+                    english: 'a classroom',
+                    parsedWords: [
+                        { word: 'a', syllables: ['a'] },
+                        { word: 'classroom', syllables: ['class', 'room'] }
+                    ],
+                    chinese: '一間課室',
+                    sentence: 'We study together in a classroom.',
+                    sentenceChinese: '我們在一間課室裏一起學習。'
+                },
+                {
+                    id: 'u1_w2',
+                    english: 'have lessons',
+                    parsedWords: [
+                        { word: 'have', syllables: ['have'] },
+                        { word: 'lessons', syllables: ['les', 'sons'] }
+                    ],
+                    chinese: '上課',
+                    sentence: 'We have lessons every morning.',
+                    sentenceChinese: '我們每天早上上課。'
+                },
+                {
+                    id: 'u1_w3',
+                    english: 'a music room',
+                    parsedWords: [
+                        { word: 'a', syllables: ['a'] },
+                        { word: 'music', syllables: ['mu', 'sic'] },
+                        { word: 'room', syllables: ['room'] }
+                    ],
+                    chinese: '一間音樂室',
+                    sentence: 'We sing songs in a music room.',
+                    sentenceChinese: '我們在一間音樂室裏唱歌。'
+                },
+                {
+                    id: 'u1_w4',
+                    english: 'sing',
+                    parsedWords: [
+                        { word: 'sing', syllables: ['sing'] }
+                    ],
+                    chinese: '唱歌',
+                    sentence: 'I like to sing happy songs.',
+                    sentenceChinese: '我喜歡唱快樂的歌曲。'
+                },
+                {
+                    id: 'u1_w5',
+                    english: 'a computer room',
+                    parsedWords: [
+                        { word: 'a', syllables: ['a'] },
+                        { word: 'computer', syllables: ['com', 'pu', 'ter'] },
+                        { word: 'room', syllables: ['room'] }
+                    ],
+                    chinese: '一間電腦室',
+                    sentence: 'We type on keyboards in a computer room.',
+                    sentenceChinese: '我們在一間電腦室裏用鍵盤打字。'
+                },
+                {
+                    id: 'u1_w6',
+                    english: 'use the computers',
+                    parsedWords: [
+                        { word: 'use', syllables: ['use'] },
+                        { word: 'the', syllables: ['the'] },
+                        { word: 'computers', syllables: ['com', 'pu', 'ters'] }
+                    ],
+                    chinese: '使用電腦',
+                    sentence: 'Students use the computers to play games.',
+                    sentenceChinese: '學生們使用電腦玩遊戲。'
+                },
+                {
+                    id: 'u1_w7',
+                    english: 'an art room',
+                    parsedWords: [
+                        { word: 'an', syllables: ['an'] },
+                        { word: 'art', syllables: ['art'] },
+                        { word: 'room', syllables: ['room'] }
+                    ],
+                    chinese: '一間美術室',
+                    sentence: 'We draw picture books in an art room.',
+                    sentenceChinese: '我們在一間美術室裏畫圖畫書。'
+                },
+                {
+                    id: 'u1_w8',
+                    english: 'paint pictures',
+                    parsedWords: [
+                        { word: 'paint', syllables: ['paint'] },
+                        { word: 'pictures', syllables: ['pic', 'tures'] }
+                    ],
+                    chinese: '畫畫',
+                    sentence: 'She loves to paint pictures of birds.',
+                    sentenceChinese: '她喜歡畫小鳥的圖畫。'
+                },
+                {
+                    id: 'u1_w9',
+                    english: 'a library',
+                    parsedWords: [
+                        { word: 'a', syllables: ['a'] },
+                        { word: 'library', syllables: ['li', 'bra', 'ry'] }
+                    ],
+                    chinese: '一間圖書館',
+                    sentence: 'Please keep quiet inside a library.',
+                    sentenceChinese: '請在一間圖書館內保持安靜。'
+                },
+                {
+                    id: 'u1_w10',
+                    english: 'borrow books',
+                    parsedWords: [
+                        { word: 'borrow', syllables: ['bor', 'row'] },
+                        { word: 'books', syllables: ['books'] }
+                    ],
+                    chinese: '借書',
+                    sentence: 'We borrow books every Friday.',
+                    sentenceChinese: '我們每個星期五借書。'
+                },
+                {
+                    id: 'u1_w11',
+                    english: 'toilets',
+                    parsedWords: [
+                        { word: 'toilets', syllables: ['toi', 'lets'] }
+                    ],
+                    chinese: '洗手間',
+                    sentence: 'Remember to keep the toilets clean.',
+                    sentenceChinese: '記得保持洗手間清潔。'
+                },
+                {
+                    id: 'u1_w12',
+                    english: 'wash hands',
+                    parsedWords: [
+                        { word: 'wash', syllables: ['wash'] },
+                        { word: 'hands', syllables: ['hands'] }
+                    ],
+                    chinese: '洗手',
+                    sentence: 'Always wash hands before eating.',
+                    sentenceChinese: '吃東西前一定要洗手。'
+                },
+                {
+                    id: 'u1_w13',
+                    english: 'a lift',
+                    parsedWords: [
+                        { word: 'a', syllables: ['a'] },
+                        { word: 'lift', syllables: ['lift'] }
+                    ],
+                    chinese: '一部升降機',
+                    sentence: 'We take a lift to the third floor.',
+                    sentenceChinese: '我們乘搭一部升降機到三樓。'
+                },
+                {
+                    id: 'u1_w14',
+                    english: 'a playground',
+                    parsedWords: [
+                        { word: 'a', syllables: ['a'] },
+                        { word: 'playground', syllables: ['play', 'ground'] }
+                    ],
+                    chinese: '一個操場',
+                    sentence: 'Children run around in a playground.',
+                    sentenceChinese: '小朋友在一個操場上奔跑。'
+                },
+                {
+                    id: 'u1_w15',
+                    english: 'play games',
+                    parsedWords: [
+                        { word: 'play', syllables: ['play'] },
+                        { word: 'games', syllables: ['games'] }
+                    ],
+                    chinese: '玩遊戲',
+                    sentence: 'We play games during recess.',
+                    sentenceChinese: '我們在小息時間玩遊戲。'
+                },
+                {
+                    id: 'u1_w16',
+                    english: 'a tuck shop',
+                    parsedWords: [
+                        { word: 'a', syllables: ['a'] },
+                        { word: 'tuck', syllables: ['tuck'] },
+                        { word: 'shop', syllables: ['shop'] }
+                    ],
+                    chinese: '一間小食部',
+                    sentence: 'We buy juice at a tuck shop.',
+                    sentenceChinese: '我們在一間小食部買果汁。'
+                },
+                {
+                    id: 'u1_w17',
+                    english: 'buy snacks',
+                    parsedWords: [
+                        { word: 'buy', syllables: ['buy'] },
+                        { word: 'snacks', syllables: ['snacks'] }
+                    ],
+                    chinese: '買小食',
+                    sentence: 'I buy snacks when I am hungry.',
+                    sentenceChinese: '我肚子餓的時候會買小食。'
+                },
+                {
+                    id: 'u1_w18',
+                    english: 'a garden',
+                    parsedWords: [
+                        { word: 'a', syllables: ['a'] },
+                        { word: 'garden', syllables: ['gar', 'den'] }
+                    ],
+                    chinese: '一個花園',
+                    sentence: 'Butterflies fly in a garden.',
+                    sentenceChinese: '蝴蝶在一個花園裏飛舞。'
+                },
+                {
+                    id: 'u1_w19',
+                    english: 'plant flowers',
+                    parsedWords: [
+                        { word: 'plant', syllables: ['plant'] },
+                        { word: 'flowers', syllables: ['flow', 'ers'] }
+                    ],
+                    chinese: '種花',
+                    sentence: 'We plant flowers in the garden.',
+                    sentenceChinese: '我們在花園裏種花。'
+                }
+            ]
+        };
+
+        let state = {
+            units: [DEFAULT_UNIT_1],
+            activeUnitId: 'unit-1',
+            activeWordIndex: 0,
+            activeTab: 'flashcard',
+            stars: 10,
+            apiKey: '',
+            
+            // Syllable game set state
+            syllableGame: {
+                setIndex: 0,
+                wordInSetIndex: 0,
+                wordStructure: [],
+                userInputs: [],
+                choicePool: []
+            },
+            
+            // Spelling game set state
+            spellingGame: {
+                setIndex: 0,
+                wordInSetIndex: 0,
+                wordStructure: [],
+                userInputs: [],
+                letterPool: []
+            }
+        };
+
+        // Web Audio Synthesizer for game sound effects and synthesized applause
+        const SoundFX = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playCorrect() {
+                this.init();
+                const now = this.ctx.currentTime;
+                
+                // Arpeggio sound
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+
+                // Synthesized Clapping Applause sound
+                this.playApplause();
+            },
+            playApplause() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const clapCount = 14;
+                
+                for (let i = 0; i < clapCount; i++) {
+                    const delay = now + (Math.random() * 0.9);
+                    const bufferSize = this.ctx.sampleRate * 0.05; // 50ms noise clap
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let j = 0; j < bufferSize; j++) {
+                        data[j] = Math.random() * 2 - 1;
+                    }
+
+                    const noise = this.ctx.createBufferSource();
+                    noise.buffer = buffer;
+
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.value = 1000 + Math.random() * 1200;
+
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(0.3 + Math.random() * 0.2, delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, delay + 0.04);
+
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    noise.start(delay);
+                    noise.stop(delay + 0.05);
+                }
+            },
+            playWrong() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, now); // A3
+                osc.frequency.setValueAtTime(196, now + 0.15); // G3
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            },
+            playClick() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            }
+        };
+
+        // Convert PCM 16-bit to WAV Blob
+        function pcmToWav(pcm16Array, sampleRate = 24000) {
+            const buffer = new ArrayBuffer(44 + pcm16Array.length * 2);
+            const view = new DataView(buffer);
+
+            const writeString = (offset, str) => {
+                for (let i = 0; i < str.length; i++) {
+                    view.setUint8(offset + i, str.charCodeAt(i));
+                }
+            };
+
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + pcm16Array.length * 2, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); // PCM
+            view.setUint16(22, 1, true); // Mono
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(36, 'data');
+            view.setUint32(40, pcm16Array.length * 2, true);
+
+            for (let i = 0; i < pcm16Array.length; i++) {
+                view.setInt16(44 + i * 2, pcm16Array[i], true);
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        async function speakText(text, lang = 'en-US', instruction = '') {
+            console.log(`[TTS] Speaking: "${text}" (${lang})`);
+            
+            // Try Gemini API TTS if API key is set
+            if (state.apiKey && state.apiKey.trim().length > 5) {
+                try {
+                    const promptText = instruction ? `${instruction}: "${text}"` : `Say clearly and naturally: "${text}"`;
+                    const payload = {
+                        contents: [{ parts: [{ text: promptText }] }],
+                        generationConfig: {
+                            responseModalities: ["AUDIO"],
+                            speechConfig: {
+                                voiceConfig: {
+                                    prebuiltVoiceConfig: { voiceName: lang.startsWith('zh') ? "Kore" : "Zephyr" }
+                                }
+                            }
+                        }
+                    };
+
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${state.apiKey}`;
+                    const res = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        const inlinePart = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+                        if (inlinePart && inlinePart.data) {
+                            const pcmBuffer = base64ToArrayBuffer(inlinePart.data);
+                            const pcm16 = new Int16Array(pcmBuffer);
+                            const wavBlob = pcmToWav(pcm16, 24000);
+                            const audioUrl = URL.createObjectURL(wavBlob);
+                            const audio = new Audio(audioUrl);
+                            await audio.play();
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("[TTS Gemini Fallback to Native Speech]", e);
+                }
+            }
+
+            // Fallback: Web Speech API (window.speechSynthesis)
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                if (lang.startsWith('zh')) {
+                    utterance.lang = 'zh-HK';
+                    const voices = window.speechSynthesis.getVoices();
+                    const hkVoice = voices.find(v => v.lang.includes('HK') || v.lang.includes('cantonese'));
+                    if (hkVoice) utterance.voice = hkVoice;
+                } else {
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1.1;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function getActiveUnit() {
+            return state.units.find(u => u.id === state.activeUnitId) || state.units[0];
+        }
+
+        function getActiveWord() {
+            const unit = getActiveUnit();
+            return unit.words[state.activeWordIndex] || unit.words[0];
+        }
+
+        function renderFlashcard() {
+            const wordObj = getActiveWord();
+            const unit = getActiveUnit();
+
+            // Card Counter
+            document.getElementById('card-counter').innerText = `Word ${state.activeWordIndex + 1} / ${unit.words.length}`;
+
+            // Render Syllables Container with Flex word separation & color coding
+            const sylContainer = document.getElementById('card-syllables-container');
+            sylContainer.innerHTML = '';
+
+            const colorClasses = ['syl-c0', 'syl-c1', 'syl-c2', 'syl-c3', 'syl-c4'];
+            let colorIdx = 0;
+
+            wordObj.parsedWords.forEach((wordGroup) => {
+                const wordWrapper = document.createElement('div');
+                wordWrapper.className = 'flex items-center rounded-2xl p-1 bg-white/60 shadow-sm border border-slate-200/50 overflow-hidden';
+
+                wordGroup.syllables.forEach((syl) => {
+                    const sylBadge = document.createElement('span');
+                    const cClass = colorClasses[colorIdx % colorClasses.length];
+                    colorIdx++;
+
+                    sylBadge.className = `px-3 py-2 rounded-xl text-2xl sm:text-4xl font-extrabold shadow-sm border-2 ${cClass} transition-transform hover:scale-105 select-none`;
+                    sylBadge.innerText = syl;
+                    wordWrapper.appendChild(sylBadge);
+                });
+
+                sylContainer.appendChild(wordWrapper);
+            });
+
+            // Traditional Chinese Meaning
+            document.getElementById('card-chinese-text').innerText = wordObj.chinese;
+
+            // Render Clickable Interactive Sample Sentence
+            const engSentenceElem = document.getElementById('card-sentence-english');
+            engSentenceElem.innerHTML = '';
+
+            const sentenceWords = wordObj.sentence.split(' ');
+            sentenceWords.forEach((w) => {
+                const wordSpan = document.createElement('span');
+                const cleanWord = w.replace(/[^a-zA-Z]/g, '');
+                wordSpan.className = 'clickable-word mr-1.5';
+                wordSpan.innerText = w;
+                wordSpan.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    SoundFX.playClick();
+                    speakText(cleanWord, 'en-US', 'Say this English word with friendly intonation');
+                    updateMascot(`Pronouncing "${cleanWord}"!`);
+                });
+                engSentenceElem.appendChild(wordSpan);
+            });
+
+            // Chinese Sentence Translation
+            document.getElementById('card-sentence-chinese').innerText = wordObj.sentenceChinese;
+
+            // Render Word Thumbnails Carousel
+            renderThumbnails();
+        }
+
+        function renderThumbnails() {
+            const unit = getActiveUnit();
+            const thumbContainer = document.getElementById('word-thumbnails');
+            thumbContainer.innerHTML = '';
+
+            unit.words.forEach((w, idx) => {
+                const btn = document.createElement('button');
+                const isActive = idx === state.activeWordIndex;
+                btn.className = `px-3 py-1.5 rounded-xl font-bold text-xs whitespace-nowrap shadow-sm transition active:scale-95 ${
+                    isActive
+                        ? 'bg-indigo-600 text-white border-2 border-indigo-400 scale-105'
+                        : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                }`;
+                btn.innerText = w.english;
+                btn.addEventListener('click', () => {
+                    SoundFX.playClick();
+                    state.activeWordIndex = idx;
+                    renderFlashcard();
+                });
+                thumbContainer.appendChild(btn);
+            });
+        }
+
+        // --- GAME SET LOGIC HELPERS ---
+        function getUnitSets(unit) {
+            const sets = [];
+            for (let i = 0; i < unit.words.length; i += 5) {
+                sets.push(unit.words.slice(i, i + 5));
+            }
+            return sets;
+        }
+
+        // --- SYLLABLE GAME ---
+        function initSyllableGame(resetSet = false) {
+            document.getElementById('syl-set-complete-modal').classList.add('hidden');
+            const unit = getActiveUnit();
+            const sets = getUnitSets(unit);
+
+            if (resetSet) {
+                state.syllableGame.setIndex = 0;
+                state.syllableGame.wordInSetIndex = 0;
+            }
+
+            // Ensure index safety
+            if (state.syllableGame.setIndex >= sets.length) {
+                state.syllableGame.setIndex = 0;
+            }
+
+            const currentSet = sets[state.syllableGame.setIndex];
+            if (state.syllableGame.wordInSetIndex >= currentSet.length) {
+                state.syllableGame.wordInSetIndex = 0;
+            }
+
+            const currentWord = currentSet[state.syllableGame.wordInSetIndex];
+
+            // Set Header UI
+            document.getElementById('syl-set-badge').innerText = `Set ${state.syllableGame.setIndex + 1} of ${sets.length}`;
+            document.getElementById('syl-word-progress').innerText = `Word ${state.syllableGame.wordInSetIndex + 1} / ${currentSet.length}`;
+
+            // Progress Dots
+            const dotsContainer = document.getElementById('syl-progress-dots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < currentSet.length; i++) {
+                const dot = document.createElement('div');
+                if (i < state.syllableGame.wordInSetIndex) {
+                    dot.className = 'w-3 h-3 rounded-full bg-purple-600 shadow-sm';
+                } else if (i === state.syllableGame.wordInSetIndex) {
+                    dot.className = 'w-4 h-4 rounded-full bg-amber-400 border-2 border-purple-600 animate-pulse';
+                } else {
+                    dot.className = 'w-3 h-3 rounded-full bg-purple-200';
+                }
+                dotsContainer.appendChild(dot);
+            }
+
+            document.getElementById('syllable-game-hint-chinese').innerText = currentWord.chinese;
+
+            // Structure multi-word expression
+            const wordStructure = currentWord.parsedWords.map(pw => {
+                return {
+                    word: pw.word,
+                    syllables: pw.syllables.map(s => s.toLowerCase())
+                };
+            });
+
+            state.syllableGame.wordStructure = wordStructure;
+            state.syllableGame.userInputs = wordStructure.map(w => new Array(w.syllables.length).fill(''));
+
+            // Collect target syllables + distractors
+            const allTargetSyls = [];
+            currentWord.parsedWords.forEach(w => {
+                w.syllables.forEach(s => allTargetSyls.push(s.toLowerCase()));
+            });
+
+            const commonDistractors = ['la', 'tion', 'ing', 'per', 'mon', 'bo', 'ter', 'ful', 'sen', 'ra'];
+            const distractors = [];
+            while (distractors.length < 3) {
+                const randSyl = commonDistractors[Math.floor(Math.random() * commonDistractors.length)];
+                if (!allTargetSyls.includes(randSyl) && !distractors.includes(randSyl)) {
+                    distractors.push(randSyl);
+                }
+            }
+
+            const pool = [...allTargetSyls, ...distractors];
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+
+            state.syllableGame.choicePool = pool;
+            renderSyllableGameUI();
+        }
+
+        function renderSyllableGameUI() {
+            const targetZone = document.getElementById('syllable-target-zone');
+            const choicePoolElem = document.getElementById('syllable-choice-pool');
+
+            targetZone.innerHTML = '';
+            choicePoolElem.innerHTML = '';
+
+            const colorClasses = ['syl-c0', 'syl-c1', 'syl-c2', 'syl-c3', 'syl-c4'];
+
+            // Render each word container so multi-syllable individual words remain contiguous
+            state.syllableGame.wordStructure.forEach((wObj, wordIdx) => {
+                const wordBox = document.createElement('div');
+                wordBox.className = 'flex items-center p-1.5 bg-purple-50/90 rounded-2xl border-2 border-purple-200 shadow-sm gap-1';
+
+                wObj.syllables.forEach((sylTarget, sylIdx) => {
+                    const slotBtn = document.createElement('button');
+                    const val = state.syllableGame.userInputs[wordIdx][sylIdx];
+                    const colorClass = colorClasses[(wordIdx + sylIdx) % colorClasses.length];
+
+                    slotBtn.className = `min-w-[60px] h-12 px-3 rounded-xl font-extrabold text-xl flex items-center justify-center transition border-2 ${
+                        val
+                            ? `${colorClass} shadow active:scale-90`
+                            : 'bg-white text-purple-300 border-purple-200 border-dashed hover:bg-purple-50'
+                    }`;
+                    slotBtn.innerText = val ? val : `...`;
+
+                    slotBtn.addEventListener('click', () => {
+                        if (val) {
+                            SoundFX.playClick();
+                            state.syllableGame.userInputs[wordIdx][sylIdx] = '';
+                            state.syllableGame.choicePool.push(val);
+                            renderSyllableGameUI();
+                        }
+                    });
+
+                    wordBox.appendChild(slotBtn);
+                });
+
+                targetZone.appendChild(wordBox);
+            });
+
+            // Choice Tiles
+            state.syllableGame.choicePool.forEach((syl, idx) => {
+                const tile = document.createElement('button');
+                tile.className = `px-4 py-2.5 rounded-xl font-extrabold text-xl bg-white hover:bg-purple-100 text-purple-900 shadow border-2 border-purple-200 active:scale-95 transition`;
+                tile.innerText = syl;
+                tile.addEventListener('click', () => {
+                    SoundFX.playClick();
+                    let placed = false;
+                    for (let w = 0; w < state.syllableGame.userInputs.length; w++) {
+                        for (let s = 0; s < state.syllableGame.userInputs[w].length; s++) {
+                            if (!state.syllableGame.userInputs[w][s]) {
+                                state.syllableGame.userInputs[w][s] = syl;
+                                state.syllableGame.choicePool.splice(idx, 1);
+                                placed = true;
+                                break;
+                            }
+                        }
+                        if (placed) break;
+                    }
+                    renderSyllableGameUI();
+                });
+                choicePoolElem.appendChild(tile);
+            });
+        }
+
+        function checkSyllableAnswer() {
+            const unit = getActiveUnit();
+            const sets = getUnitSets(unit);
+            const currentSet = sets[state.syllableGame.setIndex];
+            const currentWord = currentSet[state.syllableGame.wordInSetIndex];
+
+            let isCorrect = true;
+            state.syllableGame.wordStructure.forEach((wObj, wIdx) => {
+                const userWordSyls = state.syllableGame.userInputs[wIdx].join('').toLowerCase();
+                const targetWordSyls = wObj.syllables.join('').toLowerCase();
+                if (userWordSyls !== targetWordSyls) isCorrect = false;
+            });
+
+            if (isCorrect) {
+                SoundFX.playCorrect();
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+                addStars(5);
+
+                // Check if set completed
+                if (state.syllableGame.wordInSetIndex + 1 >= currentSet.length) {
+                    // SET COMPLETED!
+                    setTimeout(() => {
+                        SoundFX.playApplause();
+                        document.getElementById('syl-complete-title').innerText = `Set ${state.syllableGame.setIndex + 1} Completed!`;
+                        const nextBtn = document.getElementById('btn-syl-next-set');
+                        if (state.syllableGame.setIndex + 1 >= sets.length) {
+                            nextBtn.innerHTML = `<span>Replay Unit from Set 1</span> <i class="fa-solid fa-trophy"></i>`;
+                        } else {
+                            nextBtn.innerHTML = `<span>Challenge Set ${state.syllableGame.setIndex + 2}</span> <i class="fa-solid fa-arrow-right"></i>`;
+                        }
+                        document.getElementById('syl-set-complete-modal').classList.remove('hidden');
+
+                        const setPraise = `Amazing job! You completed Set ${state.syllableGame.setIndex + 1}! Choose to revise or challenge the next set!`;
+                        updateMascot(setPraise);
+                        speakText(setPraise, 'en-US', 'Say enthusiastically in warm teacher voice');
+                    }, 500);
+
+                } else {
+                    // Next word in set
+                    const praiseText = `Excellent! You built "${currentWord.english}"!`;
+                    updateMascot(praiseText);
+                    speakText(praiseText, 'en-US', 'Say with enthusiastic teacher tone');
+
+                    setTimeout(() => {
+                        state.syllableGame.wordInSetIndex++;
+                        initSyllableGame();
+                    }, 1200);
+                }
+
+            } else {
+                SoundFX.playWrong();
+                const retryText = `Keep trying! Listen closely and order the syllables again!`;
+                updateMascot(retryText);
+                speakText(retryText, 'en-US', 'Say with supportive teacher voice');
+            }
+        }
+
+        // --- SPELLING GAME ---
+        function initSpellingGame(resetSet = false) {
+            document.getElementById('spell-set-complete-modal').classList.add('hidden');
+            const unit = getActiveUnit();
+            const sets = getUnitSets(unit);
+
+            if (resetSet) {
+                state.spellingGame.setIndex = 0;
+                state.spellingGame.wordInSetIndex = 0;
+            }
+
+            if (state.spellingGame.setIndex >= sets.length) {
+                state.spellingGame.setIndex = 0;
+            }
+
+            const currentSet = sets[state.spellingGame.setIndex];
+            if (state.spellingGame.wordInSetIndex >= currentSet.length) {
+                state.spellingGame.wordInSetIndex = 0;
+            }
+
+            const currentWord = currentSet[state.spellingGame.wordInSetIndex];
+
+            // Set Header UI
+            document.getElementById('spell-set-badge').innerText = `Set ${state.spellingGame.setIndex + 1} of ${sets.length}`;
+            document.getElementById('spell-word-progress').innerText = `Word ${state.spellingGame.wordInSetIndex + 1} / ${currentSet.length}`;
+
+            // Progress Dots
+            const dotsContainer = document.getElementById('spell-progress-dots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < currentSet.length; i++) {
+                const dot = document.createElement('div');
+                if (i < state.spellingGame.wordInSetIndex) {
+                    dot.className = 'w-3 h-3 rounded-full bg-teal-600 shadow-sm';
+                } else if (i === state.spellingGame.wordInSetIndex) {
+                    dot.className = 'w-4 h-4 rounded-full bg-amber-400 border-2 border-teal-600 animate-pulse';
+                } else {
+                    dot.className = 'w-3 h-3 rounded-full bg-teal-200';
+                }
+                dotsContainer.appendChild(dot);
+            }
+
+            document.getElementById('spelling-game-hint-chinese').innerText = currentWord.chinese;
+
+            // Structure multi-word expression
+            const wordStructure = currentWord.parsedWords.map(pw => {
+                return {
+                    word: pw.word,
+                    letters: pw.word.toLowerCase().split('')
+                };
+            });
+
+            state.spellingGame.wordStructure = wordStructure;
+            state.spellingGame.userInputs = wordStructure.map(w => new Array(w.letters.length).fill(''));
+
+            // Letter pool + distractors
+            const allTargetLetters = currentWord.english.toLowerCase().replace(/[^a-z]/g, '').split('');
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            const distractors = [];
+            while (distractors.length < 4) {
+                const randChar = alphabet[Math.floor(Math.random() * alphabet.length)];
+                if (!distractors.includes(randChar)) {
+                    distractors.push(randChar);
+                }
+            }
+
+            const pool = [...allTargetLetters, ...distractors];
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+
+            state.spellingGame.letterPool = pool;
+            renderSpellingGameUI();
+        }
+
+        function renderSpellingGameUI() {
+            const container = document.getElementById('spelling-words-container');
+            const poolElem = document.getElementById('spelling-letter-pool');
+
+            container.innerHTML = '';
+            poolElem.innerHTML = '';
+
+            state.spellingGame.wordStructure.forEach((wObj, wordIdx) => {
+                const wordBox = document.createElement('div');
+                wordBox.className = 'flex items-center gap-1.5 p-2 bg-slate-50/80 rounded-2xl border border-teal-100 shadow-sm';
+
+                wObj.letters.forEach((char, letterIdx) => {
+                    const slotBtn = document.createElement('button');
+                    const val = state.spellingGame.userInputs[wordIdx][letterIdx];
+
+                    slotBtn.className = `w-10 h-12 rounded-xl font-extrabold text-2xl flex items-center justify-center transition border-2 ${
+                        val
+                            ? 'bg-teal-500 text-white border-teal-600 shadow'
+                            : 'bg-white text-teal-800 border-teal-200 border-dashed'
+                    }`;
+                    slotBtn.innerText = val ? val.toUpperCase() : '';
+
+                    slotBtn.addEventListener('click', () => {
+                        if (val) {
+                            SoundFX.playClick();
+                            state.spellingGame.userInputs[wordIdx][letterIdx] = '';
+                            state.spellingGame.letterPool.push(val);
+                            renderSpellingGameUI();
+                        }
+                    });
+
+                    wordBox.appendChild(slotBtn);
+                });
+
+                container.appendChild(wordBox);
+            });
+
+            // Letter Pool Choices
+            state.spellingGame.letterPool.forEach((char, poolIdx) => {
+                const tile = document.createElement('button');
+                tile.className = `w-11 h-11 rounded-xl font-extrabold text-xl bg-white hover:bg-teal-100 text-teal-900 border-2 border-teal-200 shadow active:scale-90 transition flex items-center justify-center`;
+                tile.innerText = char.toUpperCase();
+
+                tile.addEventListener('click', () => {
+                    SoundFX.playClick();
+                    let placed = false;
+                    for (let w = 0; w < state.spellingGame.userInputs.length; w++) {
+                        for (let l = 0; l < state.spellingGame.userInputs[w].length; l++) {
+                            if (!state.spellingGame.userInputs[w][l]) {
+                                state.spellingGame.userInputs[w][l] = char;
+                                state.spellingGame.letterPool.splice(poolIdx, 1);
+                                placed = true;
+                                break;
+                            }
+                        }
+                        if (placed) break;
+                    }
+                    renderSpellingGameUI();
+                });
+
+                poolElem.appendChild(tile);
+            });
+        }
+
+        function checkSpellingAnswer() {
+            const unit = getActiveUnit();
+            const sets = getUnitSets(unit);
+            const currentSet = sets[state.spellingGame.setIndex];
+            const currentWord = currentSet[state.spellingGame.wordInSetIndex];
+
+            let isCorrect = true;
+            state.spellingGame.wordStructure.forEach((wObj, wIdx) => {
+                const userWord = state.spellingGame.userInputs[wIdx].join('').toLowerCase();
+                const targetWord = wObj.letters.join('').toLowerCase();
+                if (userWord !== targetWord) isCorrect = false;
+            });
+
+            if (isCorrect) {
+                SoundFX.playCorrect();
+                confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+                addStars(10);
+
+                if (state.spellingGame.wordInSetIndex + 1 >= currentSet.length) {
+                    // SET COMPLETED!
+                    setTimeout(() => {
+                        SoundFX.playApplause();
+                        document.getElementById('spell-complete-title').innerText = `Set ${state.spellingGame.setIndex + 1} Completed!`;
+                        const nextBtn = document.getElementById('btn-spell-next-set');
+                        if (state.spellingGame.setIndex + 1 >= sets.length) {
+                            nextBtn.innerHTML = `<span>Replay Unit from Set 1</span> <i class="fa-solid fa-trophy"></i>`;
+                        } else {
+                            nextBtn.innerHTML = `<span>Challenge Set ${state.spellingGame.setIndex + 2}</span> <i class="fa-solid fa-arrow-right"></i>`;
+                        }
+                        document.getElementById('spell-set-complete-modal').classList.remove('hidden');
+
+                        const setPraise = `Brilliant speller! You finished Set ${state.spellingGame.setIndex + 1}! Revise again or try the next set!`;
+                        updateMascot(setPraise);
+                        speakText(setPraise, 'en-US', 'Say cheerfully with warm primary teacher voice');
+                    }, 500);
+
+                } else {
+                    const praiseText = `Superb! You spelled "${currentWord.english}" correctly!`;
+                    updateMascot(praiseText);
+                    speakText(praiseText, 'en-US', 'Say with cheerful encouraging voice');
+
+                    setTimeout(() => {
+                        state.spellingGame.wordInSetIndex++;
+                        initSpellingGame();
+                    }, 1200);
+                }
+
+            } else {
+                SoundFX.playWrong();
+                const retryText = `Not quite right! Check your letters carefully and try again!`;
+                updateMascot(retryText);
+                speakText(retryText, 'en-US', 'Say with supportive teacher voice');
+            }
+        }
+
+        async function handleAddUnitSubmit() {
+            const titleInput = document.getElementById('input-unit-title').value.trim();
+            const wordsInput = document.getElementById('input-unit-words').value.trim();
+
+            if (!titleInput || !wordsInput) {
+                alert('Please provide a Unit Title and at least one word!');
+                return;
+            }
+
+            const rawWords = wordsInput.split(/[\n,]+/).map(w => w.trim()).filter(w => w.length > 0);
+            const submitBtn = document.getElementById('btn-submit-add-unit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Generating Unit...`;
+
+            let generatedWords = [];
+
+            if (state.apiKey && state.apiKey.trim().length > 5) {
+                try {
+                    const prompt = `Create primary English vocabulary flashcard data for the unit "${titleInput}".
+Words list: ${rawWords.join(', ')}.
+For each word/phrase, break it down into syllables for each word in the phrase, provide Traditional Chinese translation, a primary-school level sample sentence, and Traditional Chinese sentence translation.
+Return JSON in this format:
+[
+  {
+    "english": "a music room",
+    "parsedWords": [
+      {"word": "a", "syllables": ["a"]},
+      {"word": "music", "syllables": ["mu", "sic"]},
+      {"word": "room", "syllables": ["room"]}
+    ],
+    "chinese": "一間音樂室",
+    "sentence": "We sing in a music room.",
+    "sentenceChinese": "我們在一間音樂室裏唱歌。"
+  }
+]`;
+
+                    const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json"
+                        }
+                    };
+
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${state.apiKey}`;
+                    const res = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.ok) {
+                        const jsonRes = await res.json();
+                        const resultText = jsonRes?.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (resultText) {
+                            const parsed = JSON.parse(resultText);
+                            if (Array.isArray(parsed) && parsed.length > 0) {
+                                generatedWords = parsed.map((item, idx) => ({
+                                    id: `custom_${Date.now()}_${idx}`,
+                                    english: item.english,
+                                    parsedWords: item.parsedWords,
+                                    chinese: item.chinese,
+                                    sentence: item.sentence,
+                                    sentenceChinese: item.sentenceChinese
+                                }));
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn("[Gemini Add Unit API Warning]", e);
+                }
+            }
+
+            if (generatedWords.length === 0) {
+                generatedWords = rawWords.map((wStr, idx) => {
+                    const parts = wStr.split(' ');
+                    const parsedWords = parts.map(p => ({
+                        word: p,
+                        syllables: p.length > 4 ? [p.slice(0, Math.ceil(p.length/2)), p.slice(Math.ceil(p.length/2))] : [p]
+                    }));
+                    return {
+                        id: `custom_fb_${Date.now()}_${idx}`,
+                        english: wStr,
+                        parsedWords: parsedWords,
+                        chinese: `【${wStr}】`,
+                        sentence: `This is ${wStr}.`,
+                        sentenceChinese: `這是${wStr}。`
+                    };
+                });
+            }
+
+            const newUnit = {
+                id: `unit_${Date.now()}`,
+                title: titleInput,
+                words: generatedWords
+            };
+
+            state.units.push(newUnit);
+            populateUnitDropdown();
+            state.activeUnitId = newUnit.id;
+            document.getElementById('unit-select').value = newUnit.id;
+            state.activeWordIndex = 0;
+            renderFlashcard();
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Generate Unit`;
+            document.getElementById('modal-add-unit').classList.add('hidden');
+            document.getElementById('input-unit-title').value = '';
+            document.getElementById('input-unit-words').value = '';
+
+            updateMascot(`Awesome! Added unit "${titleInput}" with ${generatedWords.length} words!`);
+        }
+
+        function populateUnitDropdown() {
+            const select = document.getElementById('unit-select');
+            select.innerHTML = '';
+            state.units.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.innerText = u.title;
+                select.appendChild(opt);
+            });
+        }
+
+        function addStars(count) {
+            state.stars += count;
+            document.getElementById('star-count').innerText = state.stars;
+        }
+
+        function updateMascot(message) {
+            document.getElementById('mascot-speech').innerText = `"${message}"`;
+        }
+
+        function switchTab(tabName) {
+            SoundFX.playClick();
+            state.activeTab = tabName;
+
+            const tabs = {
+                'flashcard': document.getElementById('tab-flashcard'),
+                'syllable-game': document.getElementById('tab-syllable-game'),
+                'spelling-game': document.getElementById('tab-spelling-game')
+            };
+
+            const views = {
+                'flashcard': document.getElementById('view-flashcards'),
+                'syllable-game': document.getElementById('view-syllable-game'),
+                'spelling-game': document.getElementById('view-spelling-game')
+            };
+
+            Object.keys(tabs).forEach(t => {
+                if (t === tabName) {
+                    tabs[t].className = 'tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 bg-indigo-600 text-white shadow-md';
+                    views[t].classList.remove('hidden');
+                } else {
+                    tabs[t].className = 'tab-btn flex-1 py-2.5 px-3 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100';
+                    views[t].classList.add('hidden');
+                }
+            });
+
+            if (tabName === 'syllable-game') initSyllableGame(true);
+            if (tabName === 'spelling-game') initSpellingGame(true);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            
+            populateUnitDropdown();
+            renderFlashcard();
+
+            // Tab Navigation
+            document.getElementById('tab-flashcard').addEventListener('click', () => switchTab('flashcard'));
+            document.getElementById('tab-syllable-game').addEventListener('click', () => switchTab('syllable-game'));
+            document.getElementById('tab-spelling-game').addEventListener('click', () => switchTab('spelling-game'));
+
+            // Unit Dropdown
+            document.getElementById('unit-select').addEventListener('change', (e) => {
+                SoundFX.playClick();
+                state.activeUnitId = e.target.value;
+                state.activeWordIndex = 0;
+                renderFlashcard();
+                if (state.activeTab === 'syllable-game') initSyllableGame(true);
+                if (state.activeTab === 'spelling-game') initSpellingGame(true);
+            });
+
+            // Card Navigation
+            document.getElementById('btn-prev-card').addEventListener('click', () => {
+                SoundFX.playClick();
+                const unit = getActiveUnit();
+                state.activeWordIndex = (state.activeWordIndex - 1 + unit.words.length) % unit.words.length;
+                renderFlashcard();
+            });
+
+            document.getElementById('btn-next-card').addEventListener('click', () => {
+                SoundFX.playClick();
+                const unit = getActiveUnit();
+                state.activeWordIndex = (state.activeWordIndex + 1) % unit.words.length;
+                renderFlashcard();
+            });
+
+            // Audio Controls (Flashcards)
+            document.getElementById('btn-speak-word').addEventListener('click', () => {
+                const wordObj = getActiveWord();
+                SoundFX.playClick();
+                speakText(wordObj.english, 'en-US', 'Say clearly with warm natural primary teacher intonation');
+            });
+
+            document.getElementById('btn-speak-chinese').addEventListener('click', () => {
+                const wordObj = getActiveWord();
+                SoundFX.playClick();
+                speakText(wordObj.chinese, 'zh-HK', 'Say in clear standard written Cantonese');
+            });
+
+            document.getElementById('btn-speak-sentence').addEventListener('click', () => {
+                const wordObj = getActiveWord();
+                SoundFX.playClick();
+                speakText(wordObj.sentence, 'en-US', 'Say naturally with friendly teacher intonation');
+            });
+
+            document.getElementById('btn-speak-sentence-chinese').addEventListener('click', () => {
+                const wordObj = getActiveWord();
+                SoundFX.playClick();
+                speakText(wordObj.sentenceChinese, 'zh-HK', 'Say in standard Cantonese');
+            });
+
+            // Game Controls - Syllable Game
+            document.getElementById('btn-audio-syllable-prompt').addEventListener('click', () => {
+                const unit = getActiveUnit();
+                const sets = getUnitSets(unit);
+                const currentWord = sets[state.syllableGame.setIndex][state.syllableGame.wordInSetIndex];
+                speakText(currentWord.english, 'en-US', 'Say clearly with cheerful intonation');
+            });
+            document.getElementById('btn-syllable-reset').addEventListener('click', () => {
+                SoundFX.playClick();
+                initSyllableGame();
+            });
+            document.getElementById('btn-syllable-check').addEventListener('click', checkSyllableAnswer);
+
+            // Syllable Set completion modal buttons
+            document.getElementById('btn-syl-revise-set').addEventListener('click', () => {
+                SoundFX.playClick();
+                state.syllableGame.wordInSetIndex = 0;
+                initSyllableGame();
+            });
+            document.getElementById('btn-syl-next-set').addEventListener('click', () => {
+                SoundFX.playClick();
+                const unit = getActiveUnit();
+                const sets = getUnitSets(unit);
+                state.syllableGame.setIndex = (state.syllableGame.setIndex + 1) % sets.length;
+                state.syllableGame.wordInSetIndex = 0;
+                initSyllableGame();
+            });
+
+            // Game Controls - Spelling Game
+            document.getElementById('btn-audio-spelling-prompt').addEventListener('click', () => {
+                const unit = getActiveUnit();
+                const sets = getUnitSets(unit);
+                const currentWord = sets[state.spellingGame.setIndex][state.spellingGame.wordInSetIndex];
+                speakText(currentWord.english, 'en-US', 'Say clearly with warm tone');
+            });
+            document.getElementById('btn-spelling-reset').addEventListener('click', () => {
+                SoundFX.playClick();
+                initSpellingGame();
+            });
+            document.getElementById('btn-spelling-check').addEventListener('click', checkSpellingAnswer);
+
+            // Spelling Set completion modal buttons
+            document.getElementById('btn-spell-revise-set').addEventListener('click', () => {
+                SoundFX.playClick();
+                state.spellingGame.wordInSetIndex = 0;
+                initSpellingGame();
+            });
+            document.getElementById('btn-spell-next-set').addEventListener('click', () => {
+                SoundFX.playClick();
+                const unit = getActiveUnit();
+                state.spellingGame.setIndex = (state.spellingGame.setIndex + 1) % getUnitSets(unit).length;
+                state.spellingGame.wordInSetIndex = 0;
+                initSpellingGame();
+            });
+
+            // Mascot repeat speech
+            document.getElementById('btn-repeat-mascot-speech').addEventListener('click', () => {
+                const msg = document.getElementById('mascot-speech').innerText.replace(/^"|"$/g, '');
+                speakText(msg, 'en-US', 'Say in encouraging warm teacher voice');
+            });
+
+            // Add Unit Modal Controls
+            document.getElementById('btn-open-add-unit').addEventListener('click', () => {
+                SoundFX.playClick();
+                document.getElementById('modal-add-unit').classList.remove('hidden');
+            });
+            document.getElementById('btn-close-add-unit').addEventListener('click', () => {
+                document.getElementById('modal-add-unit').classList.add('hidden');
+            });
+            document.getElementById('btn-cancel-add-unit').addEventListener('click', () => {
+                document.getElementById('modal-add-unit').classList.add('hidden');
+            });
+            document.getElementById('btn-submit-add-unit').addEventListener('click', handleAddUnitSubmit);
+
+            // Settings Modal Controls
+            document.getElementById('btn-open-settings').addEventListener('click', () => {
+                SoundFX.playClick();
+                document.getElementById('input-api-key').value = state.apiKey;
+                document.getElementById('modal-settings').classList.remove('hidden');
+            });
+            document.getElementById('btn-close-settings').addEventListener('click', () => {
+                document.getElementById('modal-settings').classList.add('hidden');
+            });
+            document.getElementById('btn-save-settings').addEventListener('click', () => {
+                state.apiKey = document.getElementById('input-api-key').value.trim();
+                document.getElementById('modal-settings').classList.add('hidden');
+                updateMascot(state.apiKey ? "Gemini API key saved! AI Voice & Generation enabled!" : "Using standard browser voices.");
+            });
+
+        });
+    </script>
+</body>
+</html>
