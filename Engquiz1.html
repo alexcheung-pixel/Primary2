@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P.2 English Quest - Mrs Cheng Yam On School</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Friendly Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Lexend', 'Noto Sans HK', sans-serif;
+            letter-spacing: 0.02em;
+            word-spacing: 0.08em;
+            line-height: 1.6;
+            transition: background-color 0.3s ease;
+        }
+
+        h1, h2, h3, .font-heading {
+            font-family: 'Fredoka', 'Lexend', sans-serif;
+        }
+
+        /* Color Themes for visual comfort */
+        .tint-cream { background-color: #faf5e8; color: #1c1917; }
+        .tint-blue { background-color: #f0f9ff; color: #0f172a; }
+        .tint-green { background-color: #f0fdf4; color: #14532d; }
+        .tint-pink { background-color: #fdf2f8; color: #831843; }
+
+        /* Syllable styling for friendly reading */
+        .syl-0 { color: #1e40af; background-color: #dbeafe; } /* Deep Blue */
+        .syl-1 { color: #9a3412; background-color: #ffedd5; } /* Orange */
+        .syl-2 { color: #065f46; background-color: #d1fae5; } /* Emerald */
+        .syl-3 { color: #6b21a8; background-color: #f3e8ff; } /* Purple */
+
+        /* 3D Card Flip Animation */
+        .card-flip-container {
+            perspective: 1000px;
+        }
+        
+        .card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Gamified Bounce & Pulse Animations */
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-bounce-subtle {
+            animation: bounce-subtle 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); }
+            50% { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+        }
+        .pulse-gold {
+            animation: pulse-gold 2s infinite;
+        }
+
+        /* Canvas for celebration confetti overlay */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="tint-cream min-h-screen pb-16 relative selection:bg-amber-200">
+
+    <!-- Confetti Overlay Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-4 border-amber-300 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+            <!-- School Brand & Student Avatar -->
+            <div class="flex items-center gap-3">
+                <div id="player-avatar-badge" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-white flex items-center justify-center font-extrabold text-2xl shadow-md border-2 border-white transform hover:scale-105 transition-transform cursor-pointer" onclick="openShopModal()" title="Click to change avatar!">
+                    🐶
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black text-amber-950 flex items-center gap-2 leading-tight">
+                        Mrs Cheng Yam On School
+                    </h1>
+                    <div class="flex items-center gap-2 text-xs font-bold text-amber-800">
+                        <span>P.2 English Quest</span>
+                        <span class="px-2 py-0.5 bg-amber-100 rounded-full text-amber-900 border border-amber-300">Phoebe (6) • Class 2A</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gamified Stats & Power-Up Controls -->
+            <div class="flex items-center gap-3 flex-wrap">
+                <!-- Level & XP Widget -->
+                <div class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3.5 py-1.5 rounded-2xl shadow-sm flex items-center gap-3 border border-amber-300">
+                    <div class="text-center">
+                        <div class="text-[10px] uppercase tracking-wider font-extrabold text-amber-100">Level</div>
+                        <div id="player-level" class="text-lg font-black leading-none">1</div>
+                    </div>
+                    <div class="w-24 bg-black/20 rounded-full h-3 p-0.5 overflow-hidden">
+                        <div id="xp-bar-inner" class="bg-yellow-300 h-full rounded-full transition-all duration-500" style="width: 20%;"></div>
+                    </div>
+                    <div class="text-xs font-extrabold text-yellow-200">
+                        <span id="player-xp">20</span>/100 XP
+                    </div>
+                </div>
+
+                <!-- Star Balance Button (Opens Reward Shop) -->
+                <button onclick="openShopModal()" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border-2 border-amber-400 px-3 py-1.5 rounded-2xl font-black text-sm flex items-center gap-1.5 shadow-xs transition-transform active:scale-95">
+                    <i class="fa-solid fa-star text-amber-500 text-base animate-spin-slow"></i>
+                    <span id="star-count">50</span> Stars
+                </button>
+
+                <!-- Color Tint Controls -->
+                <div class="hidden sm:flex items-center gap-1 bg-amber-50 p-1 rounded-2xl border border-amber-200">
+                    <button onclick="setBgTint('tint-cream')" class="w-6 h-6 rounded-full bg-[#faf5e8] border-2 border-amber-400 hover:scale-110 transition-transform shadow-2xs" title="Cream Theme"></button>
+                    <button onclick="setBgTint('tint-blue')" class="w-6 h-6 rounded-full bg-[#f0f9ff] border-2 border-blue-400 hover:scale-110 transition-transform shadow-2xs" title="Sky Theme"></button>
+                    <button onclick="setBgTint('tint-green')" class="w-6 h-6 rounded-full bg-[#f0fdf4] border-2 border-emerald-400 hover:scale-110 transition-transform shadow-2xs" title="Garden Theme"></button>
+                    <button onclick="setBgTint('tint-pink')" class="w-6 h-6 rounded-full bg-[#fdf2f8] border-2 border-pink-400 hover:scale-110 transition-transform shadow-2xs" title="Candy Theme"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs with Fun Icons -->
+        <div class="max-w-6xl mx-auto px-4 flex border-t border-amber-200 overflow-x-auto gap-2 py-2">
+            <button id="tab-btn-vocab" onclick="switchTab('vocab')" class="tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-amber-500 text-white shadow-sm transition-all shrink-0">
+                <i class="fa-solid fa-book-sparkles"></i> A. Vocab Explorer (詞彙)
+            </button>
+            <button id="tab-btn-dictation" onclick="switchTab('dictation')" class="tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-white text-amber-900 hover:bg-amber-100 transition-all border border-amber-200 shrink-0">
+                <i class="fa-solid fa-headset"></i> B. Dictation Hero (默書)
+            </button>
+            <button id="tab-btn-grammar" onclick="switchTab('grammar')" class="tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-white text-amber-900 hover:bg-amber-100 transition-all border border-amber-200 shrink-0">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> C. Language Focus (句型)
+            </button>
+            <button id="tab-btn-match" onclick="switchTab('match')" class="tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-purple-600 text-white hover:bg-purple-700 transition-all border border-purple-300 shrink-0">
+                <i class="fa-solid fa-gamepad"></i> D. Match Mini-Game (連連看)
+            </button>
+            <button id="tab-btn-quiz" onclick="switchTab('quiz')" class="tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 transition-all ml-auto shadow-sm shrink-0">
+                <i class="fa-solid fa-trophy"></i> Master Quiz (挑戰)
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 pt-6">
+
+        <!-- Superhero Quest Banner -->
+        <div class="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 border-2 border-amber-300 rounded-3xl p-4 md:p-5 mb-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 text-white/10 text-9xl font-black pointer-events-none">
+                <i class="fa-solid fa-rocket"></i>
+            </div>
+            <div class="flex items-center gap-4 z-10">
+                <div class="w-14 h-14 bg-white text-amber-600 rounded-2xl flex items-center justify-center text-3xl shadow-md shrink-0 animate-bounce-subtle">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div>
+                    <h2 class="font-black text-xl md:text-2xl drop-shadow-sm">Welcome to Phoebe's English Quest! 🚀</h2>
+                    <p class="text-xs md:text-sm text-amber-100 font-bold">
+                        Collect <i class="fa-solid fa-star text-yellow-200"></i> Stars, flip cards, play games, and level up your English skills! Click any word to hear natural audio.
+                    </p>
+                </div>
+            </div>
+            <button onclick="openShopModal()" class="z-10 px-4 py-2.5 bg-white text-amber-800 hover:bg-yellow-100 font-extrabold text-sm rounded-2xl shadow-md transition-all flex items-center gap-2 shrink-0">
+                <i class="fa-solid fa-gift text-amber-500 text-lg"></i> Unlock Rewards
+            </button>
+        </div>
+
+        <!-- SECTION A: VOCABULARY EXPLORER -->
+        <section id="section-vocab" class="tab-content block">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-icons text-amber-500"></i> A. Vocabulary Flashcards
+                    </h2>
+                    <p class="text-sm font-medium text-slate-600">Tap cards to flip for Cantonese! Tap the speaker to hear clear English!</p>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
+                    <button onclick="filterVocab('all')" id="vfilter-all" class="vfilter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-500 text-white">All (全部)</button>
+                    <button onclick="filterVocab('places')" id="vfilter-places" class="vfilter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 hover:bg-slate-100">Places (地點)</button>
+                    <button onclick="filterVocab('ordinals')" id="vfilter-ordinals" class="vfilter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 hover:bg-slate-100">Ordinals (序數)</button>
+                    <button onclick="filterVocab('verbs')" id="vfilter-verbs" class="vfilter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 hover:bg-slate-100">Verbs (動詞)</button>
+                </div>
+            </div>
+
+            <!-- Flashcard Grid -->
+            <div id="vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Javascript will inject colorful cards here -->
+            </div>
+        </section>
+
+        <!-- SECTION B: DICTATION HERO -->
+        <section id="section-dictation" class="tab-content hidden">
+            <div class="bg-white border-2 border-amber-200 rounded-3xl p-6 shadow-md mb-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 font-extrabold rounded-full text-xs mb-2">
+                            1st Term Quiz Dictation Paragraph
+                        </span>
+                        <h2 class="text-2xl md:text-3xl font-black text-slate-800">
+                            <i class="fa-solid fa-file-pen text-amber-500"></i> B. Dictation Passage (默書課文)
+                        </h2>
+                    </div>
+
+                    <!-- Audio Controls -->
+                    <div class="flex flex-wrap items-center gap-2 bg-amber-50 p-2.5 rounded-2xl border border-amber-200">
+                        <button onclick="playDictationParagraph(0.9)" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-sm flex items-center gap-2 shadow-sm transition-all">
+                            <i class="fa-solid fa-play"></i> Read Normal
+                        </button>
+                        <button onclick="playDictationParagraph(0.65)" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold rounded-xl text-sm flex items-center gap-2 shadow-sm transition-all">
+                            <i class="fa-solid fa-turtle"></i> Turtle Pace 🐢
+                        </button>
+                        <button onclick="stopAudio()" class="p-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-sm transition-all" title="Stop Audio">
+                            <i class="fa-solid fa-square"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Paragraph Preview -->
+                <div class="py-6">
+                    <p class="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">Click any sentence to hear Cantonese explanation:</p>
+                    <div id="dictation-text-container" class="text-xl md:text-2xl font-semibold leading-loose text-slate-800 p-6 bg-slate-50 rounded-2xl border border-slate-200 space-x-1">
+                        <!-- Paragraph content populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Line-by-Line Karaoke Practice -->
+                <div class="mt-4 pt-6 border-t border-slate-100">
+                    <h3 class="font-extrabold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-amber-500"></i> Line by Line Practice (逐句練習)
+                    </h3>
+                    <div id="dictation-sentences-list" class="space-y-3">
+                        <!-- Sentence blocks inserted via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dictation Spelling Challenge -->
+            <div class="bg-emerald-50 border-2 border-emerald-200 rounded-3xl p-6 shadow-md">
+                <h3 class="text-xl md:text-2xl font-black text-emerald-900 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-spell-check text-emerald-600"></i> Dictation Spelling Challenge (+50 Stars)
+                </h3>
+                <p class="text-sm font-medium text-emerald-800 mb-6">Listen to the missing word and type it into the box below:</p>
+
+                <div id="dictation-fill-container" class="space-y-4">
+                    <!-- Interactive fill blanks injected via JS -->
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button onclick="checkDictationAnswers()" class="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl text-base flex items-center gap-2 shadow-md transition-transform hover:scale-105 active:scale-95">
+                        <i class="fa-solid fa-circle-check text-xl"></i> Check My Answers (檢查答案)
+                    </button>
+                </div>
+                <div id="dictation-score-box" class="mt-4 p-4 rounded-2xl hidden text-center font-extrabold text-lg"></div>
+            </div>
+        </section>
+
+        <!-- SECTION C: LANGUAGE FOCUS -->
+        <section id="section-grammar" class="tab-content hidden">
+            <div class="space-y-6">
+                <!-- Grammar Card 1 -->
+                <div class="bg-white border-2 border-blue-200 rounded-3xl p-6 shadow-md">
+                    <div class="flex items-center gap-3 border-b border-blue-100 pb-4 mb-4">
+                        <div class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-black text-xl shadow-xs">
+                            1
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-blue-950">Asking if a room exists: <span class="text-blue-600">Is there ...?</span></h3>
+                            <p class="text-xs font-bold text-blue-700">詢問學校是否有某個設施</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-start gap-3">
+                            <span class="p-2 bg-emerald-500 text-white rounded-xl text-sm font-bold shrink-0"><i class="fa-solid fa-check"></i> YES</span>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-extrabold text-slate-800 text-base">"Is there a computer room?"</span>
+                                    <button onclick="speakEnglish('Is there a computer room?')" class="text-blue-600 hover:text-blue-800 text-lg"><i class="fa-solid fa-volume-high"></i></button>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl border border-emerald-200 text-sm font-extrabold text-emerald-900 shadow-2xs">
+                                    ✓ Yes, there is. We can use the computers.
+                                    <button onclick="speakEnglish('Yes, there is. We can use the computers.')" class="ml-2 text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
+                                </div>
+                                <p class="text-xs font-semibold text-slate-600 mt-1.5">有，這裏有。我們可以使用電腦。</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl flex items-start gap-3">
+                            <span class="p-2 bg-rose-500 text-white rounded-xl text-sm font-bold shrink-0"><i class="fa-solid fa-xmark"></i> NO</span>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-extrabold text-slate-800 text-base">"Is there a tuck shop?"</span>
+                                    <button onclick="speakEnglish('Is there a tuck shop?')" class="text-blue-600 hover:text-blue-800 text-lg"><i class="fa-solid fa-volume-high"></i></button>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl border border-rose-200 text-sm font-extrabold text-rose-900 shadow-2xs">
+                                    ✗ No, there isn't.
+                                    <button onclick="speakEnglish('No, there isn\'t.')" class="ml-2 text-rose-600"><i class="fa-solid fa-volume-high"></i></button>
+                                </div>
+                                <p class="text-xs font-semibold text-slate-600 mt-1.5">沒有，這裏沒有。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grammar Card 2 -->
+                <div class="bg-white border-2 border-purple-200 rounded-3xl p-6 shadow-md">
+                    <div class="flex items-center gap-3 border-b border-purple-100 pb-4 mb-4">
+                        <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-black text-xl shadow-xs">
+                            2
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-purple-950">Asking location: <span class="text-purple-600">Where is / Where are ...?</span></h3>
+                            <p class="text-xs font-bold text-purple-700">詢問地點及樓層 (1個地方用 is / 多於1個用 are)</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Singular -->
+                        <div class="bg-purple-50 border border-purple-200 p-4 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-black bg-purple-200 text-purple-900 px-2.5 py-1 rounded-md">Singular (單數 1個)</span>
+                                <span class="text-xs font-extrabold text-purple-800">Where <span class="underline decoration-2">is</span> the ...?</span>
+                            </div>
+                            <div class="p-3 bg-white rounded-xl border border-purple-200 mb-2 shadow-2xs">
+                                <p class="font-extrabold text-slate-800 flex items-center justify-between">
+                                    "Where is the library?"
+                                    <button onclick="speakEnglish('Where is the library?')" class="text-purple-600 text-lg"><i class="fa-solid fa-volume-high"></i></button>
+                                </p>
+                                <p class="text-sm font-black text-purple-800 mt-1 flex items-center justify-between">
+                                    ➜ It's on the third floor.
+                                    <button onclick="speakEnglish('It\'s on the third floor.')" class="text-purple-600"><i class="fa-solid fa-volume-high"></i></button>
+                                </p>
+                            </div>
+                            <p class="text-xs font-semibold text-slate-600">圖書館在哪裏？它在三樓。</p>
+                        </div>
+
+                        <!-- Plural -->
+                        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-black bg-indigo-200 text-indigo-900 px-2.5 py-1 rounded-md">Plural (複數 多個)</span>
+                                <span class="text-xs font-extrabold text-indigo-800">Where <span class="underline decoration-2">are</span> the ...s?</span>
+                            </div>
+                            <div class="p-3 bg-white rounded-xl border border-indigo-200 mb-2 shadow-2xs">
+                                <p class="font-extrabold text-slate-800 flex items-center justify-between">
+                                    "Where are the P.2 classrooms?"
+                                    <button onclick="speakEnglish('Where are the P.2 classrooms?')" class="text-indigo-600 text-lg"><i class="fa-solid fa-volume-high"></i></button>
+                                </p>
+                                <p class="text-sm font-black text-indigo-800 mt-1 flex items-center justify-between">
+                                    ➜ They're on the second floor.
+                                    <button onclick="speakEnglish('They\'re on the second floor.')" class="text-indigo-600"><i class="fa-solid fa-volume-high"></i></button>
+                                </p>
+                            </div>
+                            <p class="text-xs font-semibold text-slate-600">二年級教室在哪裏？它們在二樓。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION D: MATCH MINI-GAME -->
+        <section id="section-match" class="tab-content hidden">
+            <div class="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-300 rounded-3xl p-6 shadow-md">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-purple-200 pb-4 mb-6">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-purple-200 text-purple-900 font-extrabold rounded-full text-xs mb-1">Mini-Game Mode</span>
+                        <h2 class="text-2xl md:text-3xl font-black text-purple-950 flex items-center gap-2">
+                            <i class="fa-solid fa-puzzle-piece text-purple-600"></i> Vocab Matching Quest
+                        </h2>
+                        <p class="text-xs md:text-sm font-bold text-purple-700">Match the English word on the left with its Cantonese meaning on the right!</p>
+                    </div>
+                    <button onclick="resetMatchGame()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-extrabold rounded-xl text-sm shadow-sm transition-transform active:scale-95 flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Shuffle New Game
+                    </button>
+                </div>
+
+                <!-- Game Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left English Cards -->
+                    <div id="match-left-col" class="space-y-3">
+                        <!-- Rendered by JS -->
+                    </div>
+                    <!-- Right Cantonese Cards -->
+                    <div id="match-right-col" class="space-y-3">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <div id="match-win-msg" class="mt-6 p-4 rounded-2xl bg-purple-200 text-purple-950 font-black text-center text-xl hidden border-2 border-purple-400">
+                    🎉 Outstanding! You matched all pairs! (+30 XP & +20 Stars)
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION INTERACTIVE QUIZ -->
+        <section id="section-quiz" class="tab-content hidden">
+            <div class="bg-white border-2 border-emerald-300 rounded-3xl p-6 shadow-lg">
+                <div class="flex items-center justify-between border-b border-emerald-100 pb-4 mb-6">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-full text-xs mb-1">Interactive Quiz</span>
+                        <h2 class="text-2xl md:text-3xl font-black text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-star text-amber-400"></i> Primary 2 English Quiz
+                        </h2>
+                    </div>
+                    <div id="quiz-score-badge" class="bg-amber-100 border-2 border-amber-300 px-4 py-2 rounded-2xl text-amber-900 font-black text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-500"></i> Score: <span id="current-score">0</span> / <span id="total-questions">6</span>
+                    </div>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Quiz questions rendered by JS -->
+                </div>
+
+                <div class="mt-8 flex justify-center">
+                    <button onclick="checkGrammarQuiz()" class="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xl rounded-2xl shadow-lg transition-transform hover:scale-105 active:scale-95 flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-2xl"></i> Submit Quiz Answers (提交答案)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- REWARD SHOP / AVATAR UNLOCK MODAL -->
+    <div id="shop-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl border-4 border-amber-400 max-w-md w-full p-6 shadow-2xl relative transform transition-all scale-100">
+            <button onclick="closeShopModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-black flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl font-black mx-auto mb-2 border-2 border-amber-300">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+                <h3 class="text-2xl font-black text-amber-950">Avatar & Sticker Shop</h3>
+                <p class="text-xs font-bold text-amber-700">Use your Stars to unlock cute avatars!</p>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-900 rounded-full font-black text-sm mt-2">
+                    <i class="fa-solid fa-star text-amber-500"></i> Your Balance: <span id="shop-star-balance">50</span>
+                </div>
+            </div>
+
+            <!-- Avatar Grid -->
+            <div id="avatar-grid" class="grid grid-cols-4 gap-3 mb-6">
+                <!-- Javascript will render avatar choices -->
+            </div>
+
+            <button onclick="closeShopModal()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl shadow-md">
+                Done (完成)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Web Audio Synthesizer for Fun FX
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+            playPop() {
+                this.init();
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.1);
+            }
+            playSuccess() {
+                this.init();
+                if (!this.ctx) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.08 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + idx * 0.08);
+                    osc.stop(this.ctx.currentTime + idx * 0.08 + 0.2);
+                });
+            }
+        }
+        const sfx = new SoundFX();
+
+        // Player Stats State
+        let gameState = {
+            xp: 20,
+            level: 1,
+            stars: 50,
+            avatar: '🐶',
+            unlockedAvatars: ['🐶', '🐱'],
+            masteredVocab: []
+        };
+
+        const avatarsList = [
+            { icon: '🐶', name: 'Doggo', cost: 0 },
+            { icon: '🐱', name: 'Kitty', cost: 0 },
+            { icon: '🐰', name: 'Bunny', cost: 20 },
+            { icon: '🐼', name: 'Panda', cost: 30 },
+            { icon: '🦊', name: 'Foxy', cost: 40 },
+            { icon: '🦄', name: 'Unicorn', cost: 60 },
+            { icon: '🐉', name: 'Dragon', cost: 80 },
+            { icon: '🤖', name: 'Robot', cost: 100 }
+        ];
+
+        function addXP(amount) {
+            gameState.xp += amount;
+            if (gameState.xp >= 100) {
+                gameState.level += 1;
+                gameState.xp -= 100;
+                sfx.playSuccess();
+                triggerConfetti();
+            }
+            updatePlayerUI();
+        }
+
+        function addStars(amount) {
+            gameState.stars += amount;
+            sfx.playPop();
+            updatePlayerUI();
+        }
+
+        function updatePlayerUI() {
+            document.getElementById('player-level').innerText = gameState.level;
+            document.getElementById('player-xp').innerText = gameState.xp;
+            document.getElementById('xp-bar-inner').style.width = `${gameState.xp}%`;
+            document.getElementById('star-count').innerText = gameState.stars;
+            document.getElementById('player-avatar-badge').innerText = gameState.avatar;
+            document.getElementById('shop-star-balance').innerText = gameState.stars;
+        }
+
+        // Speech synthesis helper functions
+        function speakEnglish(text, rate = 0.85) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            
+            // Clean up text if needed for speech output
+            const cleanText = text.trim();
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'en-US';
+            utterance.rate = rate;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function speakCantonese(text, rate = 0.85) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-HK';
+            utterance.rate = rate;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function stopAudio() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        // Vocabulary dataset - FIXED "library" syllable breakdown & text
+        const vocabData = [
+            // Places at school
+            { id: 'v1', type: 'places', text: 'a classroom', speechText: 'a classroom', words: [{ syllables: ['a'] }, { syllables: ['class', 'room'] }], cantonese: '課室', audioZh: '課室', icon: 'fa-chalkboard-user' },
+            { id: 'v2', type: 'places', text: 'a music room', speechText: 'a music room', words: [{ syllables: ['a'] }, { syllables: ['mu', 'sic'] }, { syllables: ['room'] }], cantonese: '音樂室', audioZh: '音樂室', icon: 'fa-music' },
+            { id: 'v3', type: 'places', text: 'a computer room', speechText: 'a computer room', words: [{ syllables: ['a'] }, { syllables: ['com', 'pu', 'ter'] }, { syllables: ['room'] }], cantonese: '電腦室', audioZh: '電腦室', icon: 'fa-desktop' },
+            { id: 'v4', type: 'places', text: 'an art room', speechText: 'an art room', words: [{ syllables: ['an'] }, { syllables: ['art'] }, { syllables: ['room'] }], cantonese: '視藝室', audioZh: '視藝室', icon: 'fa-palette' },
+            { id: 'v5', type: 'places', text: 'a tuck shop', speechText: 'a tuck shop', words: [{ syllables: ['a'] }, { syllables: ['tuck'] }, { syllables: ['shop'] }], cantonese: '小食部', audioZh: '小食部', icon: 'fa-store' },
+            { id: 'v6', type: 'places', text: 'a library', speechText: 'a library', words: [{ syllables: ['a'] }, { syllables: ['li', 'bra', 'ry'] }], cantonese: '圖書館', audioZh: '圖書館', icon: 'fa-book' },
+            { id: 'v7', type: 'places', text: 'toilets', speechText: 'toilets', words: [{ syllables: ['toi', 'lets'] }], cantonese: '洗手間', audioZh: '洗手間', icon: 'fa-restroom' },
+            { id: 'v8', type: 'places', text: 'a lift', speechText: 'a lift', words: [{ syllables: ['a'] }, { syllables: ['lift'] }], cantonese: '升降機 / 電梯', audioZh: '升降機', icon: 'fa-elevator' },
+            { id: 'v9', type: 'places', text: 'a playground', speechText: 'a playground', words: [{ syllables: ['a'] }, { syllables: ['play', 'ground'] }], cantonese: '操場 / 遊樂場', audioZh: '操場', icon: 'fa-child-rebounding' },
+            { id: 'v10', type: 'places', text: 'a garden', speechText: 'a garden', words: [{ syllables: ['a'] }, { syllables: ['gar', 'den'] }], cantonese: '花園', audioZh: '花園', icon: 'fa-tree' },
+
+            // Ordinal numbers
+            { id: 'v11', type: 'ordinals', text: 'ground', speechText: 'ground floor', words: [{ syllables: ['ground'] }], cantonese: '地下 (G/F)', audioZh: '地下', icon: 'fa-layer-group' },
+            { id: 'v12', type: 'ordinals', text: 'first', speechText: 'first', words: [{ syllables: ['first'] }], cantonese: '第一 (1st)', audioZh: '第一', icon: 'fa-1' },
+            { id: 'v13', type: 'ordinals', text: 'second', speechText: 'second', words: [{ syllables: ['sec', 'ond'] }], cantonese: '第二 (2nd)', audioZh: '第二', icon: 'fa-2' },
+            { id: 'v14', type: 'ordinals', text: 'third', speechText: 'third', words: [{ syllables: ['third'] }], cantonese: '第三 (3rd)', audioZh: '第三', icon: 'fa-3' },
+            { id: 'v15', type: 'ordinals', text: 'fourth', speechText: 'fourth', words: [{ syllables: ['fourth'] }], cantonese: '第四 (4th)', audioZh: '第四', icon: 'fa-4' },
+            { id: 'v16', type: 'ordinals', text: 'fifth', speechText: 'fifth', words: [{ syllables: ['fifth'] }], cantonese: '第五 (5th)', audioZh: '第五', icon: 'fa-5' },
+
+            // Verbs
+            { id: 'v17', type: 'verbs', text: 'borrow', speechText: 'borrow', words: [{ syllables: ['bor', 'row'] }], cantonese: '借 (書本)', audioZh: '借', icon: 'fa-hand-holding' },
+            { id: 'v18', type: 'verbs', text: 'paint', speechText: 'paint', words: [{ syllables: ['paint'] }], cantonese: '畫畫 / 繪畫', audioZh: '繪畫', icon: 'fa-paint-brush' },
+            { id: 'v19', type: 'verbs', text: 'use', speechText: 'use', words: [{ syllables: ['use'] }], cantonese: '使用', audioZh: '使用', icon: 'fa-hand-pointer' },
+            { id: 'v20', type: 'verbs', text: 'sing', speechText: 'sing', words: [{ syllables: ['sing'] }], cantonese: '唱歌', audioZh: '唱歌', icon: 'fa-microphone' },
+            { id: 'v21', type: 'verbs', text: 'buy', speechText: 'buy', words: [{ syllables: ['buy'] }], cantonese: '購買 / 買', audioZh: '買', icon: 'fa-cart-shopping' },
+            { id: 'v22', type: 'verbs', text: 'plant', speechText: 'plant', words: [{ syllables: ['plant'] }], cantonese: '種植', audioZh: '種植', icon: 'fa-seedling' },
+            { id: 'v23', type: 'verbs', text: 'wash', speechText: 'wash', words: [{ syllables: ['wash'] }], cantonese: '洗手', audioZh: '洗手', icon: 'fa-hands-bubbles' },
+            { id: 'v24', type: 'verbs', text: 'play', speechText: 'play', words: [{ syllables: ['play'] }], cantonese: '玩耍', audioZh: '玩耍', icon: 'fa-gamepad' }
+        ];
+
+        // Dictation Passage Data
+        const dictationSentences = [
+            { text: "I go to Mrs Cheng Yam On School.", cantonese: "我就讀於鄭任安夫人學校。", blanks: ["School"] },
+            { text: "There is an English room in my school.", cantonese: "我的學校有一間英語室。", blanks: ["English", "room"] },
+            { text: "It is on the third floor.", cantonese: "它在三樓。", blanks: ["third", "floor"] },
+            { text: "I can play games there.", cantonese: "我可以在那裏玩遊戲。", blanks: ["games"] },
+            { text: "I have a lot of fun.", cantonese: "我玩得很開心。", blanks: ["fun"] },
+            { text: "I love my school.", cantonese: "我愛我的學校。", blanks: ["love"] }
+        ];
+
+        // Grammar Quiz Questions
+        const quizQuestions = [
+            {
+                id: 'q1',
+                question: '1. Is there a computer room? (✓)',
+                options: [
+                    'Yes, there is. We can use the computers.',
+                    'No, there isn\'t.',
+                    'It\'s on the third floor.'
+                ],
+                correct: 0,
+                hint: 'For a tick (✓), answer "Yes, there is."'
+            },
+            {
+                id: 'q2',
+                question: '2. Is there a tuck shop? (✗)',
+                options: [
+                    'Yes, there is.',
+                    'No, there isn\'t.',
+                    'They\'re on the second floor.'
+                ],
+                correct: 1,
+                hint: 'For a cross (✗), answer "No, there isn\'t."'
+            },
+            {
+                id: 'q3',
+                question: '3. Where ______ the library?',
+                options: ['is', 'are', 'am'],
+                correct: 0,
+                hint: '"Library" is 1 place (singular), so use "is".'
+            },
+            {
+                id: 'q4',
+                question: '4. Where is the library?',
+                options: [
+                    'It\'s on the third floor.',
+                    'They\'re on the second floor.',
+                    'Yes, there is.'
+                ],
+                correct: 0,
+                hint: 'Library is singular (1 place), so start with "It\'s...".'
+            },
+            {
+                id: 'q5',
+                question: '5. Where ______ the P.2 classrooms?',
+                options: ['are', 'is', 'be'],
+                correct: 0,
+                hint: '"Classrooms" is plural (more than 1), so use "are".'
+            },
+            {
+                id: 'q6',
+                question: '6. Where are the P.2 classrooms?',
+                options: [
+                    'They\'re on the second floor.',
+                    'It\'s on the third floor.',
+                    'No, there isn\'t.'
+                ],
+                correct: 0,
+                hint: 'Classrooms is plural, so start with "They\'re...".'
+            }
+        ];
+
+        function renderVocabCards(filter = 'all') {
+            const grid = document.getElementById('vocab-grid');
+            grid.innerHTML = '';
+
+            const filteredData = filter === 'all' ? vocabData : vocabData.filter(v => v.type === filter);
+
+            filteredData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card-flip-container h-48 cursor-pointer group';
+                
+                let colorIdx = 0;
+                const wordsHtml = item.words.map(w => {
+                    const sylsHtml = w.syllables.map(syl => {
+                        const sylClass = `syl-${colorIdx % 4}`;
+                        colorIdx++;
+                        return `<span class="${sylClass} font-extrabold px-1.5 py-0.5 text-lg leading-snug">${syl}</span>`;
+                    }).join('');
+                    
+                    return `<span class="inline-flex rounded-xl overflow-hidden border border-black/10 shadow-2xs">${sylsHtml}</span>`;
+                }).join('<span class="w-1.5 inline-block"></span>');
+
+                card.innerHTML = `
+                    <div id="card-inner-${item.id}" class="card-inner relative w-full h-full border-2 border-amber-200 rounded-3xl bg-white shadow-sm hover:shadow-md transition-all">
+                        <!-- Card Front -->
+                        <div class="card-front absolute inset-0 p-4 flex flex-col justify-between rounded-3xl bg-white">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-200">
+                                    ${item.type}
+                                </span>
+                                <button onclick="event.stopPropagation(); speakEnglish('${item.speechText}')" class="p-2.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-xl transition-colors shadow-2xs" title="Listen Clear English">
+                                    <i class="fa-solid fa-volume-high text-lg"></i>
+                                </button>
+                            </div>
+
+                            <div class="my-auto text-center">
+                                <i class="fa-solid ${item.icon} text-amber-500 text-3xl mb-2"></i>
+                                <div class="flex flex-wrap items-center justify-center gap-y-1">
+                                    ${wordsHtml}
+                                </div>
+                            </div>
+
+                            <div class="text-center text-xs text-slate-400 font-bold flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-rotate text-amber-500"></i> Tap to read Cantonese
+                            </div>
+                        </div>
+
+                        <!-- Card Back (Cantonese) -->
+                        <div class="card-back absolute inset-0 p-4 flex flex-col justify-between rounded-3xl bg-gradient-to-br from-amber-50 to-orange-100 text-amber-900">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-black bg-amber-200 text-amber-950 px-2.5 py-1 rounded-lg">中文釋義</span>
+                                <button onclick="event.stopPropagation(); speakCantonese('${item.audioZh}')" class="p-2.5 bg-amber-200 text-amber-950 hover:bg-amber-300 rounded-xl transition-colors">
+                                    <i class="fa-solid fa-volume-high text-lg"></i>
+                                </button>
+                            </div>
+
+                            <div class="text-center my-auto">
+                                <h3 class="text-2xl font-black text-amber-950">${item.cantonese}</h3>
+                                <p class="text-base font-extrabold text-amber-800 mt-1">${item.text}</p>
+                            </div>
+
+                            <div class="text-center text-xs text-amber-700 font-bold">
+                                Tap to flip back
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Flip behavior + XP reward
+                card.onclick = () => {
+                    const inner = document.getElementById(`card-inner-${item.id}`);
+                    const isFlipped = inner.classList.contains('card-flipped');
+                    sfx.playPop();
+                    if (!isFlipped) {
+                        inner.classList.add('card-flipped');
+                        speakCantonese(item.audioZh);
+                        addXP(2);
+                    } else {
+                        inner.classList.remove('card-flipped');
+                    }
+                };
+
+                grid.appendChild(card);
+            });
+        }
+
+        function filterVocab(type) {
+            document.querySelectorAll('.vfilter-btn').forEach(btn => {
+                btn.className = 'vfilter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold text-slate-700 hover:bg-slate-100';
+            });
+            document.getElementById(`vfilter-${type}`).className = 'vfilter-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-500 text-white';
+            renderVocabCards(type);
+        }
+
+        function renderDictationSection() {
+            // Text Container
+            const textContainer = document.getElementById('dictation-text-container');
+            textContainer.innerHTML = dictationSentences.map(sentence => {
+                return `<span class="inline-block hover:bg-amber-200/80 rounded-xl px-2 py-0.5 cursor-pointer transition-colors" onclick="speakCantonese('${sentence.cantonese}')" title="Click to hear Cantonese">
+                    ${sentence.text}
+                </span>`;
+            }).join(' ');
+
+            // Line by line sentence list
+            const sentenceList = document.getElementById('dictation-sentences-list');
+            sentenceList.innerHTML = '';
+
+            dictationSentences.forEach((s, idx) => {
+                const div = document.createElement('div');
+                div.className = 'flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl gap-3 hover:border-amber-300 transition-colors shadow-2xs';
+                div.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="w-8 h-8 rounded-full bg-amber-200 text-amber-950 font-black flex items-center justify-center text-xs shrink-0 mt-0.5">
+                            ${idx + 1}
+                        </span>
+                        <div>
+                            <p class="font-extrabold text-slate-800 text-lg">${s.text}</p>
+                            <p class="text-xs text-amber-900 font-bold">${s.cantonese}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                        <button onclick="speakEnglish('${s.text.replace(/'/g, "\\'")}', 0.9)" class="px-3.5 py-2 bg-blue-100 hover:bg-blue-200 text-blue-900 font-extrabold rounded-xl text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-volume-high"></i> English
+                        </button>
+                        <button onclick="speakEnglish('${s.text.replace(/'/g, "\\'")}', 0.65)" class="px-3.5 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold rounded-xl text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-turtle"></i> Slow 🐢
+                        </button>
+                        <button onclick="speakCantonese('${s.cantonese}')" class="px-3.5 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-extrabold rounded-xl text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-language"></i> 粵語
+                        </button>
+                    </div>
+                `;
+                sentenceList.appendChild(div);
+            });
+
+            // Dictation Fill-in-the-blanks setup
+            const fillContainer = document.getElementById('dictation-fill-container');
+            fillContainer.innerHTML = '';
+
+            dictationSentences.forEach((s, sIdx) => {
+                let sentenceHtml = s.text;
+                s.blanks.forEach((blankWord, bIdx) => {
+                    const inputId = `dblank-${sIdx}-${bIdx}`;
+                    const regex = new RegExp(`\\b${blankWord}\\b`, 'gi');
+                    const inputField = `<input type="text" id="${inputId}" data-answer="${blankWord}" class="w-32 px-3 py-1.5 border-2 border-emerald-300 rounded-xl text-center font-black text-emerald-900 focus:outline-none focus:border-emerald-600 bg-white shadow-2xs" placeholder="type here">`;
+                    sentenceHtml = sentenceHtml.replace(regex, inputField);
+                });
+
+                const div = document.createElement('div');
+                div.className = 'p-4 bg-white rounded-2xl border border-emerald-200 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3';
+                div.innerHTML = `
+                    <div class="text-lg font-bold text-slate-800">
+                        ${sentenceHtml}
+                    </div>
+                    <button onclick="speakEnglish('${s.text.replace(/'/g, "\\'")}', 0.75)" class="p-2.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 rounded-xl text-xs font-black flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-volume-high"></i> Listen Sentence
+                    </button>
+                `;
+                fillContainer.appendChild(div);
+            });
+        }
+
+        function playDictationParagraph(rate = 0.9) {
+            const fullText = dictationSentences.map(s => s.text).join(' ');
+            speakEnglish(fullText, rate);
+        }
+
+        function checkDictationAnswers() {
+            const inputs = document.querySelectorAll('[id^="dblank-"]');
+            let correctCount = 0;
+
+            inputs.forEach(input => {
+                const userVal = input.value.trim().toLowerCase();
+                const targetVal = input.getAttribute('data-answer').toLowerCase();
+
+                if (userVal === targetVal) {
+                    correctCount++;
+                    input.className = 'w-32 px-3 py-1.5 border-2 border-emerald-500 bg-emerald-100 text-emerald-950 rounded-xl text-center font-black shadow-xs';
+                } else {
+                    input.className = 'w-32 px-3 py-1.5 border-2 border-rose-500 bg-rose-100 text-rose-950 rounded-xl text-center font-black shadow-xs';
+                }
+            });
+
+            const scoreBox = document.getElementById('dictation-score-box');
+            scoreBox.classList.remove('hidden');
+
+            if (correctCount === inputs.length) {
+                scoreBox.className = 'mt-4 p-4 rounded-2xl bg-emerald-200 text-emerald-950 font-black text-xl text-center border-2 border-emerald-400 shadow-md';
+                scoreBox.innerHTML = `🎉 Super Job Phoebe! Perfect Score: ${correctCount}/${inputs.length}! (+50 Stars & +40 XP)`;
+                sfx.playSuccess();
+                triggerConfetti();
+                addStars(50);
+                addXP(40);
+                speakEnglish('Outstanding! Perfect score!');
+            } else {
+                scoreBox.className = 'mt-4 p-4 rounded-2xl bg-amber-200 text-amber-950 font-black text-lg text-center border-2 border-amber-400 shadow-sm';
+                scoreBox.innerHTML = `💪 Great try! You got ${correctCount}/${inputs.length} correct. Check the red boxes and try again! (+10 XP)`;
+                addXP(10);
+            }
+        }
+
+        // Matching Mini-Game Logic
+        let selectedLeft = null;
+        let selectedRight = null;
+        let matchedCount = 0;
+
+        function resetMatchGame() {
+            matchedCount = 0;
+            selectedLeft = null;
+            selectedRight = null;
+            document.getElementById('match-win-msg').classList.add('hidden');
+
+            // Pick 5 random items from vocabData
+            const shuffled = [...vocabData].sort(() => 0.5 - Math.random()).slice(0, 5);
+
+            const leftItems = [...shuffled].sort(() => 0.5 - Math.random());
+            const rightItems = [...shuffled].sort(() => 0.5 - Math.random());
+
+            const leftCol = document.getElementById('match-left-col');
+            const rightCol = document.getElementById('match-right-col');
+
+            leftCol.innerHTML = leftItems.map(item => `
+                <button id="match-left-${item.id}" onclick="selectLeft('${item.id}', '${item.speechText}')" class="w-full p-4 bg-white border-2 border-purple-200 hover:border-purple-400 rounded-2xl font-black text-slate-800 text-lg flex items-center justify-between shadow-2xs transition-all">
+                    <span><i class="fa-solid ${item.icon} text-purple-500 mr-2"></i> ${item.text}</span>
+                    <i class="fa-solid fa-volume-high text-purple-400 text-sm"></i>
+                </button>
+            `).join('');
+
+            rightCol.innerHTML = rightItems.map(item => `
+                <button id="match-right-${item.id}" onclick="selectRight('${item.id}', '${item.audioZh}')" class="w-full p-4 bg-white border-2 border-indigo-200 hover:border-indigo-400 rounded-2xl font-black text-slate-800 text-lg flex items-center justify-between shadow-2xs transition-all">
+                    <span>${item.cantonese}</span>
+                    <i class="fa-solid fa-volume-high text-indigo-400 text-sm"></i>
+                </button>
+            `).join('');
+        }
+
+        function selectLeft(id, speechText) {
+            sfx.playPop();
+            speakEnglish(speechText);
+            document.querySelectorAll('#match-left-col button').forEach(b => b.classList.remove('ring-4', 'ring-purple-400', 'bg-purple-100'));
+            const btn = document.getElementById(`match-left-${id}`);
+            if (btn && !btn.disabled) {
+                btn.classList.add('ring-4', 'ring-purple-400', 'bg-purple-100');
+                selectedLeft = id;
+                checkMatchPair();
+            }
+        }
+
+        function selectRight(id, audioZh) {
+            sfx.playPop();
+            speakCantonese(audioZh);
+            document.querySelectorAll('#match-right-col button').forEach(b => b.classList.remove('ring-4', 'ring-indigo-400', 'bg-indigo-100'));
+            const btn = document.getElementById(`match-right-${id}`);
+            if (btn && !btn.disabled) {
+                btn.classList.add('ring-4', 'ring-indigo-400', 'bg-indigo-100');
+                selectedRight = id;
+                checkMatchPair();
+            }
+        }
+
+        function checkMatchPair() {
+            if (selectedLeft && selectedRight) {
+                if (selectedLeft === selectedRight) {
+                    sfx.playSuccess();
+                    const leftBtn = document.getElementById(`match-left-${selectedLeft}`);
+                    const rightBtn = document.getElementById(`match-right-${selectedRight}`);
+
+                    leftBtn.className = "w-full p-4 bg-emerald-100 border-2 border-emerald-400 text-emerald-950 font-black rounded-2xl text-lg flex items-center justify-between opacity-80 cursor-not-allowed";
+                    rightBtn.className = "w-full p-4 bg-emerald-100 border-2 border-emerald-400 text-emerald-950 font-black rounded-2xl text-lg flex items-center justify-between opacity-80 cursor-not-allowed";
+
+                    leftBtn.disabled = true;
+                    rightBtn.disabled = true;
+
+                    matchedCount++;
+                    selectedLeft = null;
+                    selectedRight = null;
+
+                    if (matchedCount === 5) {
+                        document.getElementById('match-win-msg').classList.remove('hidden');
+                        triggerConfetti();
+                        addStars(20);
+                        addXP(30);
+                    }
+                } else {
+                    // Mismatch
+                    selectedLeft = null;
+                    selectedRight = null;
+                    setTimeout(() => {
+                        document.querySelectorAll('#match-left-col button:not(:disabled)').forEach(b => b.classList.remove('ring-4', 'ring-purple-400', 'bg-purple-100'));
+                        document.querySelectorAll('#match-right-col button:not(:disabled)').forEach(b => b.classList.remove('ring-4', 'ring-indigo-400', 'bg-indigo-100'));
+                    }, 400);
+                }
+            }
+        }
+
+        function renderGrammarQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            document.getElementById('total-questions').innerText = quizQuestions.length;
+
+            quizQuestions.forEach((q) => {
+                const card = document.createElement('div');
+                card.className = 'p-5 bg-slate-50 rounded-2xl border-2 border-slate-200 space-y-3 shadow-2xs';
+                
+                let optionsHtml = q.options.map((opt, optIdx) => `
+                    <label class="flex items-center gap-3 p-3.5 bg-white border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-emerald-400 transition-all font-extrabold text-slate-800 text-base shadow-2xs">
+                        <input type="radio" name="${q.id}" value="${optIdx}" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500">
+                        <span>${opt}</span>
+                    </label>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-black text-lg text-slate-900">${q.question}</h3>
+                        <button onclick="speakEnglish('${q.question.replace(/'/g, "\\'")}')" class="text-blue-600 hover:text-blue-800 p-1.5 rounded-xl bg-blue-50">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        ${optionsHtml}
+                    </div>
+                    <div id="hint-${q.id}" class="hidden text-xs font-extrabold text-amber-900 bg-amber-100 p-2.5 rounded-xl border border-amber-300">
+                        💡 Hint: ${q.hint}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function checkGrammarQuiz() {
+            let score = 0;
+
+            quizQuestions.forEach(q => {
+                const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                const hintBox = document.getElementById(`hint-${q.id}`);
+
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                    if (hintBox) hintBox.classList.add('hidden');
+                } else {
+                    if (hintBox) hintBox.classList.remove('hidden');
+                }
+            });
+
+            document.getElementById('current-score').innerText = score;
+
+            if (score === quizQuestions.length) {
+                sfx.playSuccess();
+                triggerConfetti();
+                addStars(30);
+                addXP(50);
+                speakEnglish('Outstanding! You scored 100 percent!');
+            } else {
+                addXP(15);
+                speakEnglish(`You got ${score} out of ${quizQuestions.length}. Keep practicing!`);
+            }
+        }
+
+        // Avatar Shop Modal Logic
+        function openShopModal() {
+            renderAvatarGrid();
+            document.getElementById('shop-modal').classList.remove('hidden');
+        }
+
+        function closeShopModal() {
+            document.getElementById('shop-modal').classList.add('hidden');
+        }
+
+        function renderAvatarGrid() {
+            const grid = document.getElementById('avatar-grid');
+            grid.innerHTML = avatarsList.map(av => {
+                const isUnlocked = gameState.unlockedAvatars.includes(av.icon);
+                const isEquipped = gameState.avatar === av.icon;
+
+                return `
+                    <div class="p-3 bg-amber-50 rounded-2xl border-2 ${isEquipped ? 'border-amber-500 bg-amber-100' : 'border-amber-200'} text-center flex flex-col items-center justify-between">
+                        <div class="text-3xl mb-1">${av.icon}</div>
+                        <div class="text-[11px] font-black text-amber-900 mb-1">${av.name}</div>
+                        ${isEquipped ? `
+                            <span class="text-[10px] font-black bg-amber-500 text-white px-2 py-0.5 rounded-md">Equipped</span>
+                        ` : isUnlocked ? `
+                            <button onclick="equipAvatar('${av.icon}')" class="text-[10px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-md hover:bg-emerald-700">Equip</button>
+                        ` : `
+                            <button onclick="buyAvatar('${av.icon}', ${av.cost})" class="text-[10px] font-black bg-amber-600 text-white px-2 py-0.5 rounded-md hover:bg-amber-700 flex items-center gap-0.5">
+                                <i class="fa-solid fa-star text-yellow-300"></i> ${av.cost}
+                            </button>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function equipAvatar(icon) {
+            gameState.avatar = icon;
+            sfx.playPop();
+            updatePlayerUI();
+            renderAvatarGrid();
+        }
+
+        function buyAvatar(icon, cost) {
+            if (gameState.stars >= cost) {
+                gameState.stars -= cost;
+                gameState.unlockedAvatars.push(icon);
+                gameState.avatar = icon;
+                sfx.playSuccess();
+                updatePlayerUI();
+                renderAvatarGrid();
+            }
+        }
+
+        // Confetti Generator
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
+
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 4 + 3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 4,
+                    rotation: Math.random() * 360
+                });
+            }
+
+            let frame = 0;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rotation += 4;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                frame++;
+                if (frame < 120) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        // Navigation Tabs Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.id !== 'tab-btn-match' && btn.id !== 'tab-btn-quiz') {
+                    btn.className = 'tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-white text-amber-900 hover:bg-amber-100 transition-all border border-amber-200 shrink-0';
+                }
+            });
+
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                if (tabId === 'quiz') {
+                    activeBtn.className = 'tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-emerald-600 text-white shadow-md shrink-0';
+                } else if (tabId === 'match') {
+                    activeBtn.className = 'tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-purple-600 text-white shadow-md shrink-0';
+                } else {
+                    activeBtn.className = 'tab-btn px-4 py-2.5 rounded-2xl font-extrabold text-sm md:text-base flex items-center gap-2 bg-amber-500 text-white shadow-md shrink-0';
+                }
+            }
+        }
+
+        function setBgTint(tintClass) {
+            document.body.className = `${tintClass} min-h-screen pb-16 relative selection:bg-amber-200`;
+        }
+
+        // Window load initialization
+        window.onload = function() {
+            renderVocabCards('all');
+            renderDictationSection();
+            renderGrammarQuiz();
+            resetMatchGame();
+            updatePlayerUI();
+        };
+    </script>
+</body>
+</html>
