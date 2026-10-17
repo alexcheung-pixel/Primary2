@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P.2 English Quiz Revision - Mrs Cheng Yam On School</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts - Fredoka / Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Fredoka', 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #fef3c7 100%);
+      min-height: 100vh;
+      user-select: none;
+    }
+    .card-shadow {
+      box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    }
+    .btn-bounce:active {
+      transform: scale(0.95);
+    }
+    .animated-pulse {
+      animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.03); }
+    }
+    .streak-fire {
+      animation: fire-bounce 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes fire-bounce {
+      0% { transform: scale(1) translateY(0); }
+      100% { transform: scale(1.15) translateY(-3px); }
+    }
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .modal-backdrop {
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="text-slate-800 pb-12">
+  <canvas id="confetti-canvas"></canvas>
+
+  <header class="bg-white/90 backdrop-blur sticky top-0 z-40 border-b-4 border-sky-300 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-2.5 flex flex-wrap justify-between items-center gap-3">
+      <!-- Title & School -->
+      <div class="flex items-center gap-3">
+        <div class="bg-sky-500 text-white w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-md">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg md:text-xl text-sky-900 leading-tight">P.2 Quiz Revision Master</h1>
+          <p class="text-xs font-semibold text-sky-600">Mrs Cheng Yam On School • 1st Term Quiz (3)</p>
+        </div>
+      </div>
+
+      <!-- Gamification Bar (Stars, Streak, Level, Sticker & Trophy Buttons) -->
+      <div class="flex items-center flex-wrap gap-2 sm:gap-3">
+        <!-- Streak Counter -->
+        <div class="flex items-center gap-1.5 bg-orange-50 border-2 border-orange-300 px-3 py-1 rounded-full shadow-inner">
+          <span class="text-xl streak-fire">🔥</span>
+          <span id="streak-count" class="font-extrabold text-lg text-orange-600">0</span>
+          <span class="text-[10px] font-bold text-orange-800 uppercase hidden sm:inline">Streak</span>
+        </div>
+
+        <!-- Stars Counter -->
+        <div class="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-300 px-3 py-1 rounded-full shadow-inner">
+          <i class="fa-solid fa-star text-amber-500 text-xl animate-bounce"></i>
+          <span id="star-count" class="font-extrabold text-lg text-amber-600">0</span>
+        </div>
+
+        <!-- Level & XP Badge -->
+        <div class="bg-purple-50 border-2 border-purple-300 px-3 py-1 rounded-full flex items-center gap-2 shadow-inner">
+          <i class="fa-solid fa-shield-halved text-purple-600 text-base"></i>
+          <div class="text-left">
+            <div class="text-[10px] font-extrabold text-purple-800 leading-none" id="level-title">Lv.1 Novice</div>
+            <div class="w-16 bg-purple-200 h-1.5 rounded-full mt-0.5 overflow-hidden">
+              <div id="xp-bar" class="bg-purple-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticker Book Modal Toggle -->
+        <button onclick="openStickerModal()" class="bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold px-3 py-1.5 rounded-2xl text-xs flex items-center gap-1.5 shadow btn-bounce border border-amber-300">
+          <i class="fa-solid fa-box-open text-base"></i>
+          <span class="hidden sm:inline">Sticker Book</span>
+        </button>
+
+        <!-- Achievements Badges Modal Toggle -->
+        <button onclick="openBadgesModal()" class="bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold px-3 py-1.5 rounded-2xl text-xs flex items-center gap-1 shadow-sm btn-bounce border border-sky-300">
+          <i class="fa-solid fa-trophy text-amber-500 text-sm"></i>
+          <span class="hidden sm:inline">Badges</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mascot Interactive Banner -->
+    <div class="bg-sky-50/80 border-t border-sky-100 px-4 py-1.5">
+      <div class="max-w-5xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div id="mascot-avatar" onclick="cycleMascot()" class="text-2xl cursor-pointer hover:scale-110 transition-transform" title="Click to change Learning Buddy!">🐶</div>
+          <div class="bg-white border border-sky-200 px-3 py-1 rounded-2xl text-xs font-semibold text-sky-900 shadow-sm flex items-center gap-1">
+            <span id="mascot-bubble">Hi there! Ready to practice for your English Quiz? Let's go!</span>
+          </div>
+        </div>
+        <div class="text-[11px] font-bold text-sky-600 hidden md:block">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-1"></i> Practice daily to earn extra stars!
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="max-w-5xl mx-auto px-4 mt-2 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <button onclick="switchTab('sectionA')" id="tab-sectionA" class="nav-btn active flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all bg-sky-500 text-white shadow">
+        <i class="fa-solid fa-bus"></i> (A) Vocab
+      </button>
+      <button onclick="switchTab('sectionB')" id="tab-sectionB" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all bg-white text-slate-600 hover:bg-sky-50">
+        <i class="fa-solid fa-pen-line"></i> (B) Dictation
+      </button>
+      <button onclick="switchTab('sectionC')" id="tab-sectionC" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all bg-white text-slate-600 hover:bg-sky-50">
+        <i class="fa-solid fa-puzzle-piece"></i> (C) Language Focus
+      </button>
+      <button onclick="switchTab('sectionD')" id="tab-sectionD" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all bg-white text-slate-600 hover:bg-sky-50">
+        <i class="fa-solid fa-spell-check"></i> (D) Phonics
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-5xl mx-auto px-4 mt-6">
+
+    <!-- Section A: Vocab -->
+    <section id="sectionA" class="tab-content space-y-6">
+      <div class="bg-white rounded-3xl p-6 card-shadow border-2 border-sky-100">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <span class="bg-sky-100 text-sky-700 text-xs font-extrabold px-3 py-1 rounded-full uppercase">Section A</span>
+            <h2 class="text-2xl font-bold text-slate-800 mt-1">Transportation & Feelings Vocabulary</h2>
+            <p class="text-slate-500 text-sm">Click speaker icons to listen to correct pronunciation!</p>
+          </div>
+          <!-- Sub-mode Toggle -->
+          <div class="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+            <button onclick="switchVocabSubMode('learn')" id="vocab-sub-learn" class="px-4 py-1.5 rounded-xl font-bold text-xs bg-white text-sky-600 shadow-sm">
+              <i class="fa-solid fa-book-open mr-1"></i> Learn Words
+            </button>
+            <button onclick="switchVocabSubMode('quiz')" id="vocab-sub-quiz" class="px-4 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-sky-600">
+              <i class="fa-solid fa-headphones mr-1"></i> Listening Quiz
+            </button>
+          </div>
+        </div>
+
+        <!-- Vocab Cards View -->
+        <div id="vocab-learn-view">
+          <h3 class="font-bold text-sky-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-car text-sky-500"></i> Transportation (11 Words)
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-8" id="transport-grid">
+            <!-- Dynamic Injection -->
+          </div>
+
+          <h3 class="font-bold text-amber-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-face-smile text-amber-500"></i> Feelings (4 Words)
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="feelings-grid">
+            <!-- Dynamic Injection -->
+          </div>
+        </div>
+
+        <!-- Vocab Listening Quiz View -->
+        <div id="vocab-quiz-view" class="hidden space-y-6">
+          <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-6 text-center">
+            <div class="inline-block bg-sky-500 text-white p-4 rounded-full shadow-lg mb-3 cursor-pointer hover:bg-sky-600 transition btn-bounce" onclick="playCurrentVocabAudio()">
+              <i class="fa-solid fa-volume-high text-3xl"></i>
+            </div>
+            <p class="text-sm text-sky-700 font-bold mb-2">Click the speaker to hear the word, then spell it!</p>
+            
+            <div class="max-w-md mx-auto space-y-4">
+              <div id="vocab-quiz-hint" class="text-xs text-slate-400 italic">Hint: Tap audio button to start</div>
+              <input type="text" id="vocab-quiz-input" placeholder="Type what you hear..." autocomplete="off" autocorrect="off" spellcheck="false" class="w-full text-center text-xl font-bold py-3 px-4 rounded-xl border-2 border-sky-300 focus:outline-none focus:border-sky-500 shadow-sm">
+              
+              <div class="flex gap-3 justify-center">
+                <button onclick="checkVocabQuizAnswer()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-2.5 rounded-xl shadow-md btn-bounce">
+                  <i class="fa-solid fa-check mr-1"></i> Check Spelling
+                </button>
+                <button onclick="nextVocabQuizQuestion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2.5 rounded-xl btn-bounce">
+                  Skip <i class="fa-solid fa-forward ml-1"></i>
+                </button>
+              </div>
+              <div id="vocab-quiz-feedback" class="min-h-[24px] font-bold text-sm"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section B: Dictation -->
+    <section id="sectionB" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 card-shadow border-2 border-purple-100">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <span class="bg-purple-100 text-purple-700 text-xs font-extrabold px-3 py-1 rounded-full uppercase">Section B</span>
+            <h2 class="text-2xl font-bold text-slate-800 mt-1">Reading Dictation Practice</h2>
+            <p class="text-slate-500 text-sm">Practice listening and typing target dictation sentences!</p>
+          </div>
+          
+          <!-- Dictation Level Selectors -->
+          <div class="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+            <button onclick="setDictationLevel(1)" id="dict-lvl-1" class="px-3 py-1.5 rounded-xl font-bold text-xs bg-purple-600 text-white shadow-sm">
+              Level 1 (Easy)
+            </button>
+            <button onclick="setDictationLevel(2)" id="dict-lvl-2" class="px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-purple-600">
+              Level 2 (Medium)
+            </button>
+            <button onclick="setDictationLevel(3)" id="dict-lvl-3" class="px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-purple-600">
+              Level 3 (Full Sentence)
+            </button>
+          </div>
+        </div>
+
+        <!-- Audio Listening Helper Bar -->
+        <div class="bg-purple-50/80 border border-purple-200 rounded-2xl p-4 mb-6 flex flex-wrap justify-between items-center gap-3">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-headphones-simple text-purple-600 text-xl"></i>
+            <div>
+              <h4 class="font-bold text-purple-900 text-sm">Dictation Audio Practice</h4>
+              <p class="text-xs text-purple-700">Listen to the full passage audio to prepare your ears!</p>
+            </div>
+          </div>
+          <button onclick="speakFullDictationText()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-sm btn-bounce text-xs">
+            <i class="fa-solid fa-volume-high"></i> Listen to Full Passage
+          </button>
+        </div>
+
+        <!-- Level 1 & Level 2 Interactive Cloze View -->
+        <div id="dictation-cloze-view" class="space-y-4">
+          <div id="dictation-cloze-container" class="bg-slate-50 p-6 rounded-2xl border border-slate-200 leading-loose text-base font-medium space-y-3">
+            <!-- Dynamically populated sentence inputs -->
+          </div>
+          
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-purple-50/40 p-4 rounded-2xl border border-purple-100">
+            <span id="cloze-progress" class="text-xs font-bold text-purple-800">Completed 0/0 blanks</span>
+            <button onclick="checkClozeAnswers()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md btn-bounce">
+              <i class="fa-solid fa-check-double mr-1"></i> Check Dictation Answers
+            </button>
+          </div>
+          <div id="cloze-detailed-feedback" class="min-h-[20px] text-sm"></div>
+        </div>
+
+        <!-- Level 3 Full Sentence Dictation View -->
+        <div id="dictation-sentence-view" class="hidden space-y-6">
+          <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-6 text-center space-y-4">
+            <div class="flex justify-center items-center gap-3">
+              <button onclick="playDictSentenceAudio()" class="bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700 transition btn-bounce">
+                <i class="fa-solid fa-volume-high text-3xl"></i>
+              </button>
+              <span class="text-sm font-bold text-purple-900" id="sentence-counter-badge">Sentence 1 of 9</span>
+            </div>
+            
+            <p class="text-xs font-bold text-purple-700 uppercase tracking-wide">Listen carefully and type the complete sentence!</p>
+
+            <div class="max-w-xl mx-auto space-y-3">
+              <textarea id="sentence-dict-input" rows="3" placeholder="Type the complete sentence here..." class="w-full text-lg font-medium p-4 rounded-xl border-2 border-purple-300 focus:outline-none focus:border-purple-500 shadow-sm"></textarea>
+              
+              <div class="flex gap-3 justify-center">
+                <button onclick="checkSentenceDictation()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-2 rounded-xl shadow btn-bounce">
+                  <i class="fa-solid fa-check mr-1"></i> Verify Sentence
+                </button>
+                <button onclick="nextSentenceDictation()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl btn-bounce">
+                  Next <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+
+              <div id="sentence-dict-feedback" class="min-h-[40px] text-sm font-bold"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section C: Language Focus -->
+    <section id="sectionC" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 card-shadow border-2 border-amber-100">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <span class="bg-amber-100 text-amber-700 text-xs font-extrabold px-3 py-1 rounded-full uppercase">Section C</span>
+            <h2 class="text-2xl font-bold text-slate-800 mt-1">Language Focus Practice</h2>
+            <p class="text-slate-500 text-sm">Textbook Grammar, Unscramble & 30-Question Preposition Master</p>
+          </div>
+
+          <!-- Mode Toggle -->
+          <div class="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+            <button onclick="switchLangSubMode('rearrange')" id="lang-sub-rearrange" class="px-3 py-1.5 rounded-xl font-bold text-xs bg-amber-500 text-white shadow-sm">
+              Sentence Rearrange
+            </button>
+            <button onclick="switchLangSubMode('preposition')" id="lang-sub-prep" class="px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-amber-600">
+              ⚡ Preposition Challenge (30 Qs)
+            </button>
+          </div>
+        </div>
+
+        <!-- Mode 1: Sentence Unscramble -->
+        <div id="lang-rearrange-view" class="space-y-6">
+          <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs font-bold uppercase text-amber-700" id="scramble-progress">Question 1 of 7</span>
+              <button onclick="playScrambleSentenceAudio()" class="text-xs text-amber-700 font-bold bg-amber-200 px-3 py-1 rounded-lg hover:bg-amber-300">
+                <i class="fa-solid fa-volume-high mr-1"></i> Hear Target
+              </button>
+            </div>
+
+            <!-- Target Answer Slot Container -->
+            <div id="scramble-dropzone" class="min-h-[70px] bg-white border-2 border-dashed border-amber-300 rounded-xl p-3 flex flex-wrap gap-2 items-center mb-4">
+              <span class="text-slate-400 italic text-sm select-none" id="scramble-placeholder">Tap word chips below to assemble sentence...</span>
+            </div>
+
+            <!-- Pool of Word Chips -->
+            <div id="scramble-wordpool" class="flex flex-wrap gap-2 justify-center mb-6">
+              <!-- Dynamically Generated -->
+            </div>
+
+            <div class="flex gap-3 justify-center">
+              <button onclick="resetScrambleSentence()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm btn-bounce">
+                <i class="fa-solid fa-rotate-left mr-1"></i> Reset
+              </button>
+              <button onclick="checkScrambleSentence()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-2 rounded-xl shadow btn-bounce text-sm">
+                <i class="fa-solid fa-check mr-1"></i> Check Sentence
+              </button>
+              <button onclick="nextScrambleSentence()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold px-4 py-2 rounded-xl shadow btn-bounce text-sm">
+                Next <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+            <div id="scramble-feedback" class="mt-3 text-center font-bold text-sm min-h-[24px]"></div>
+          </div>
+        </div>
+
+        <!-- Mode 2: 30-Question Preposition Master Challenge -->
+        <div id="lang-preposition-view" class="hidden space-y-6">
+          <div class="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-6 space-y-6">
+            <!-- Grammar Quick Rules Cheat Sheet -->
+            <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-sm text-xs font-semibold text-slate-600">
+              <p class="font-bold text-amber-800 text-sm mb-1"><i class="fa-solid fa-lightbulb text-amber-500"></i> Preposition Quick Rules:</p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div class="bg-amber-50 p-2 rounded-lg border border-amber-200"><strong class="text-amber-800">IN</strong> + Districts / Regions / Morning / Bag (<em>in Tuen Mun, in Kowloon, in the morning</em>)</div>
+                <div class="bg-orange-50 p-2 rounded-lg border border-orange-200"><strong class="text-orange-800">ON</strong> + Islands / Foot / Days (<em>on Hong Kong Island, on foot, on Monday</em>)</div>
+                <div class="bg-yellow-50 p-2 rounded-lg border border-yellow-200"><strong class="text-yellow-800">BY / AT</strong> + Vehicles / Places / Times (<em>by bus, at the tuck shop, at 7 o'clock</em>)</div>
+              </div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="prep-question-card" class="bg-white p-6 rounded-2xl border-2 border-amber-200 text-center space-y-4 shadow-sm">
+              <!-- Dynamically populated question -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section D: Phonics -->
+    <section id="sectionD" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 card-shadow border-2 border-emerald-100">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <span class="bg-emerald-100 text-emerald-700 text-xs font-extrabold px-3 py-1 rounded-full uppercase">Section D (Bonus 10%)</span>
+            <h2 class="text-2xl font-bold text-slate-800 mt-1">Phonics & Initial Sounds</h2>
+            <p class="text-slate-500 text-sm">Practice target initial letter sounds and 3-letter word spelling!</p>
+          </div>
+
+          <div class="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+            <button onclick="switchPhonicsSubMode('cards')" id="phonics-sub-cards" class="px-3 py-1.5 rounded-xl font-bold text-xs bg-emerald-600 text-white shadow-sm">
+              Sound Cards
+            </button>
+            <button onclick="switchPhonicsSubMode('game')" id="phonics-sub-game" class="px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-emerald-600">
+              Phonics Quiz Game
+            </button>
+          </div>
+        </div>
+
+        <!-- Phonics Cards View -->
+        <div id="phonics-cards-view" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Dynamically Injected 9 Phonics Items -->
+        </div>
+
+        <!-- Phonics Game View -->
+        <div id="phonics-game-view" class="hidden bg-emerald-50/70 border-2 border-emerald-200 rounded-2xl p-6 text-center space-y-6">
+          <div class="inline-block bg-emerald-500 text-white p-4 rounded-full shadow-lg cursor-pointer hover:bg-emerald-600 btn-bounce" onclick="playPhonicsGameAudio()">
+            <i class="fa-solid fa-volume-high text-3xl"></i>
+          </div>
+          <p class="text-sm font-bold text-emerald-800" id="phonics-game-prompt">Listen to the word and select the correct initial sound & word!</p>
+
+          <div id="phonics-game-options" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-lg mx-auto">
+            <!-- Dynamic Options -->
+          </div>
+
+          <div id="phonics-game-feedback" class="h-6 font-bold text-sm"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL 1: Level Up Celebration Modal -->
+  <div id="level-up-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center border-4 border-purple-400 shadow-2xl space-y-4 animate-bounce">
+      <div class="text-5xl">🎉</div>
+      <h3 class="text-2xl font-black text-purple-900 uppercase">Level Up!</h3>
+      <p class="text-sm font-bold text-purple-700" id="modal-level-desc">You reached Level 2!</p>
+      <div class="bg-purple-100 p-3 rounded-2xl font-extrabold text-purple-800 text-lg" id="modal-level-title">
+        🌟 Star Scholar
+      </div>
+      <button onclick="closeLevelUpModal()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl shadow-md btn-bounce">
+        Awesome! Keep Going <i class="fa-solid fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Sticker Book Shop & Gallery -->
+  <div id="sticker-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full border-4 border-amber-300 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="text-xl font-black text-amber-900 flex items-center gap-2">
+          <i class="fa-solid fa-box-open text-amber-500"></i> Reward Sticker Book
+        </h3>
+        <button onclick="closeStickerModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl px-2">&times;</button>
+      </div>
+
+      <p class="text-xs text-slate-500">Use your earned stars (⭐) to collect cool reward stickers!</p>
+
+      <div class="grid grid-cols-2 gap-3" id="sticker-grid">
+        <!-- Dynamically injected stickers -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Trophy Badges Gallery -->
+  <div id="badges-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full border-4 border-sky-300 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="text-xl font-black text-sky-900 flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-amber-500"></i> Achievements Badges
+        </h3>
+        <button onclick="closeBadgesModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl px-2">&times;</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="badges-grid">
+        <!-- Dynamically injected badges -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* State Variables */
+    let currentStreak = 0;
+    let totalStars = 0;
+    let currentXP = 0;
+    let currentLevel = 1;
+    let mascotIndex = 0;
+
+    const mascots = [
+      { emoji: "🐶", name: "Buddy the Dog" },
+      { emoji: "🐱", name: "Whiskers the Cat" },
+      { emoji: "🦉", name: "Ollie the Owl" },
+      { emoji: "🤖", name: "Beep the Robot" }
+    ];
+
+    /* Web Audio API Sound Effects Synthesizer */
+    function playSoundEffect(type) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+
+        if (type === 'correct') {
+          const osc1 = ctx.createOscillator();
+          const osc2 = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc1.type = 'sine';
+          osc2.type = 'sine';
+
+          osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+          osc1.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+          osc2.frequency.setValueAtTime(659.25, ctx.currentTime); 
+          osc2.frequency.setValueAtTime(783.99, ctx.currentTime + 0.1); // G5
+
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc1.start();
+          osc2.start();
+          osc1.stop(ctx.currentTime + 0.35);
+          osc2.stop(ctx.currentTime + 0.35);
+        } else if (type === 'wrong') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, ctx.currentTime);
+          osc.frequency.setValueAtTime(130, ctx.currentTime + 0.15);
+
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start();
+          osc.stop(ctx.currentTime + 0.3);
+        } else if (type === 'levelUp') {
+          const notes = [440, 554.37, 659.25, 880];
+          notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
+            gain.gain.setValueAtTime(0.12, ctx.currentTime + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + i * 0.08);
+            osc.stop(ctx.currentTime + i * 0.08 + 0.25);
+          });
+        }
+      } catch (e) {
+        // Fallback silently if audio context disabled
+      }
+    }
+
+    /* Speech Synthesis Helper */
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85; // slightly slower for Primary 2 students
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    /* Gamification Helpers */
+    function incrementStreak() {
+      currentStreak++;
+      document.getElementById('streak-count').innerText = currentStreak;
+      addXP(10);
+    }
+
+    function resetStreak() {
+      currentStreak = 0;
+      document.getElementById('streak-count').innerText = currentStreak;
+    }
+
+    function addStars(amount) {
+      totalStars += amount;
+      document.getElementById('star-count').innerText = totalStars;
+      triggerConfetti();
+    }
+
+    function addXP(amount) {
+      currentXP += amount;
+      if (currentXP >= 100) {
+        currentXP -= 100;
+        currentLevel++;
+        document.getElementById('level-title').innerText = `Lv.${currentLevel} Scholar`;
+        showLevelUpModal();
+      }
+      document.getElementById('xp-bar').style.width = `${currentXP}%`;
+    }
+
+    function showLevelUpModal() {
+      playSoundEffect('levelUp');
+      document.getElementById('modal-level-desc').innerText = `You reached Level ${currentLevel}!`;
+      document.getElementById('modal-level-title').innerText = currentLevel >= 3 ? "🏆 Ultimate Master" : "🌟 Star Scholar";
+      document.getElementById('level-up-modal').classList.remove('hidden');
+    }
+
+    function closeLevelUpModal() {
+      document.getElementById('level-up-modal').classList.add('hidden');
+    }
+
+    function cycleMascot() {
+      mascotIndex = (mascotIndex + 1) % mascots.length;
+      document.getElementById('mascot-avatar').innerText = mascots[mascotIndex].emoji;
+      setMascotMessage(`Hello! I'm ${mascots[mascotIndex].name}. Let's study English together!`);
+    }
+
+    function setMascotMessage(msg) {
+      document.getElementById('mascot-bubble').innerText = msg;
+    }
+
+    /* Section A Vocabulary Data */
+    const transportWords = [
+      { word: "on foot", icon: "🚶" },
+      { word: "by car", icon: "🚗" },
+      { word: "by tram", icon: "🪟" },
+      { word: "by Light Rail", icon: "🚈" },
+      { word: "by school bus", icon: "🚌" },
+      { word: "by minibus", icon: "🚐" },
+      { word: "by train", icon: "🚆" },
+      { word: "by ferry", icon: "⛴️" },
+      { word: "by taxi", icon: "🚕" },
+      { word: "by bus", icon: "🚍" },
+      { word: "by MTR", icon: "🚇" }
+    ];
+
+    const feelingsWords = [
+      { word: "tired", icon: "😫" },
+      { word: "bored", icon: "😑" },
+      { word: "hungry", icon: "🤤" },
+      { word: "thirsty", icon: "🥛" }
+    ];
+
+    function renderVocabGrids() {
+      const transContainer = document.getElementById('transport-grid');
+      transContainer.innerHTML = transportWords.map(item => `
+        <div class="bg-sky-50/80 border-2 border-sky-200 rounded-2xl p-3 text-center hover:bg-sky-100 transition shadow-sm flex flex-col justify-between items-center">
+          <div class="text-3xl my-1">${item.icon}</div>
+          <div class="font-extrabold text-sky-950 text-sm mb-2">${item.word}</div>
+          <button onclick="speakText('${item.word}')" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-3 py-1 rounded-xl shadow btn-bounce flex items-center gap-1">
+            <i class="fa-solid fa-volume-high"></i> Listen
+          </button>
+        </div>
+      `).join('');
+
+      const feelContainer = document.getElementById('feelings-grid');
+      feelContainer.innerHTML = feelingsWords.map(item => `
+        <div class="bg-amber-50/80 border-2 border-amber-200 rounded-2xl p-3 text-center hover:bg-amber-100 transition shadow-sm flex flex-col justify-between items-center">
+          <div class="text-3xl my-1">${item.icon}</div>
+          <div class="font-extrabold text-amber-950 text-sm mb-2">${item.word}</div>
+          <button onclick="speakText('${item.word}')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3 py-1 rounded-xl shadow btn-bounce flex items-center gap-1">
+            <i class="fa-solid fa-volume-high"></i> Listen
+          </button>
+        </div>
+      `).join('');
+    }
+
+    let vocabQuizIndex = 0;
+    const allVocabWords = [...transportWords, ...feelingsWords];
+
+    function switchVocabSubMode(mode) {
+      if (mode === 'learn') {
+        document.getElementById('vocab-learn-view').classList.remove('hidden');
+        document.getElementById('vocab-quiz-view').classList.add('hidden');
+        document.getElementById('vocab-sub-learn').className = "px-4 py-1.5 rounded-xl font-bold text-xs bg-white text-sky-600 shadow-sm";
+        document.getElementById('vocab-sub-quiz').className = "px-4 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-sky-600";
+      } else {
+        document.getElementById('vocab-learn-view').classList.add('hidden');
+        document.getElementById('vocab-quiz-view').classList.remove('hidden');
+        document.getElementById('vocab-sub-quiz').className = "px-4 py-1.5 rounded-xl font-bold text-xs bg-white text-sky-600 shadow-sm";
+        document.getElementById('vocab-sub-learn').className = "px-4 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-sky-600";
+        vocabQuizIndex = 0;
+        loadVocabQuizQuestion();
+      }
+    }
+
+    function loadVocabQuizQuestion() {
+      document.getElementById('vocab-quiz-input').value = '';
+      document.getElementById('vocab-quiz-feedback').innerText = '';
+      document.getElementById('vocab-quiz-hint').innerText = `Word ${vocabQuizIndex + 1} of ${allVocabWords.length} - Click speaker to hear`;
+      setTimeout(() => playCurrentVocabAudio(), 300);
+    }
+
+    function playCurrentVocabAudio() {
+      speakText(allVocabWords[vocabQuizIndex].word);
+    }
+
+    function checkVocabQuizAnswer() {
+      const user = document.getElementById('vocab-quiz-input').value.trim().toLowerCase();
+      const target = allVocabWords[vocabQuizIndex].word.toLowerCase();
+      const fb = document.getElementById('vocab-quiz-feedback');
+
+      if (user === target) {
+        fb.innerText = `🌟 Perfect spelling! "${allVocabWords[vocabQuizIndex].word}"`;
+        fb.className = "min-h-[24px] font-bold text-sm text-emerald-600";
+        playSoundEffect('correct');
+        incrementStreak();
+        addStars(1);
+        setTimeout(() => nextVocabQuizQuestion(), 1200);
+      } else {
+        fb.innerText = `❌ Oops! Correct word is "${allVocabWords[vocabQuizIndex].word}"`;
+        fb.className = "min-h-[24px] font-bold text-sm text-rose-500";
+        playSoundEffect('wrong');
+        resetStreak();
+      }
+    }
+
+    function nextVocabQuizQuestion() {
+      vocabQuizIndex = (vocabQuizIndex + 1) % allVocabWords.length;
+      loadVocabQuizQuestion();
+    }
+
+    /* Dictation Sentences & Logic */
+    const dictationSentences = [
+      "How do you come to school?",
+      "I come to school by bus every day.",
+      "Where do you live?",
+      "I live in Tuen Mun.",
+      "I'm hungry after school.",
+      "We can buy snacks at the tuck shop.",
+      "Let's eat some biscuits.",
+      "Are you tired?",
+      "No, I'm not."
+    ];
+
+    const dictationClozeSentences = [
+      "How do you come to school? I come to school by bus every day.",
+      "Where do you live? I live in Tuen Mun.",
+      "I'm hungry after school.",
+      "We can buy snacks at the tuck shop.",
+      "Let's eat some biscuits.",
+      "Are you tired? No, I'm not."
+    ];
+
+    function speakClozeSentence(idx) {
+      if (dictationClozeSentences[idx]) {
+        speakText(dictationClozeSentences[idx]);
+      }
+    }
+
+    let currentDictLevel = 1;
+    let currentDictSentenceIndex = 0;
+
+    function setDictationLevel(lvl) {
+      currentDictLevel = lvl;
+      document.getElementById('dict-lvl-1').className = lvl === 1 ? "px-3 py-1.5 rounded-xl font-bold text-xs bg-purple-600 text-white shadow-sm" : "px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-purple-600";
+      document.getElementById('dict-lvl-2').className = lvl === 2 ? "px-3 py-1.5 rounded-xl font-bold text-xs bg-purple-600 text-white shadow-sm" : "px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-purple-600";
+      document.getElementById('dict-lvl-3').className = lvl === 3 ? "px-3 py-1.5 rounded-xl font-bold text-xs bg-purple-600 text-white shadow-sm" : "px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-purple-600";
+
+      if (lvl === 1 || lvl === 2) {
+        document.getElementById('dictation-cloze-view').classList.remove('hidden');
+        document.getElementById('dictation-sentence-view').classList.add('hidden');
+        renderClozeDictation();
+      } else {
+        document.getElementById('dictation-cloze-view').classList.add('hidden');
+        document.getElementById('dictation-sentence-view').classList.remove('hidden');
+        currentDictSentenceIndex = 0;
+        loadSentenceDictation();
+      }
+    }
+
+    function renderClozeDictation() {
+      const container = document.getElementById('dictation-cloze-container');
+      let html = "";
+
+      if (currentDictLevel === 1) {
+        html = `
+          <div class="space-y-3">
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(0)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 1">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">1. How do you come to school? I come to school by <span class="inline-flex items-center gap-1"><input type="text" data-ans="bus" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-20 text-center focus:outline-none"></span> <span class="inline-flex items-center gap-1"><input type="text" data-ans="every day" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-28 text-center focus:outline-none"></span>.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(1)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 2">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">2. Where do you <span class="inline-flex items-center gap-1"><input type="text" data-ans="live" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-20 text-center focus:outline-none"></span>? I live in Tuen Mun.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(2)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 3">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">3. I'm <span class="inline-flex items-center gap-1"><input type="text" data-ans="hungry" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-24 text-center focus:outline-none"></span> after school.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(3)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 4">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">4. We can buy <span class="inline-flex items-center gap-1"><input type="text" data-ans="snacks" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-24 text-center focus:outline-none"></span> at the tuck shop.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(4)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 5">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">5. Let's eat some <span class="inline-flex items-center gap-1"><input type="text" data-ans="biscuits" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-28 text-center focus:outline-none"></span>.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(5)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 6">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">6. Are you <span class="inline-flex items-center gap-1"><input type="text" data-ans="tired" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-24 text-center focus:outline-none"></span>? No, I'm not.</div>
+            </div>
+          </div>
+        `;
+      } else {
+        html = `
+          <div class="space-y-3">
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(0)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 1">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">1. <span class="inline-flex items-center gap-1"><input type="text" data-ans="How" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-20 text-center focus:outline-none"></span> do you come to school? I come to school <span class="inline-flex items-center gap-1"><input type="text" data-ans="by bus" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-28 text-center focus:outline-none"></span> every day.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(1)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 2">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">2. Where do you live? I live <span class="inline-flex items-center gap-1"><input type="text" data-ans="in" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-16 text-center focus:outline-none"></span> <span class="inline-flex items-center gap-1"><input type="text" data-ans="Tuen Mun" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-28 text-center focus:outline-none"></span>.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(2)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 3">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">3. I'm hungry <span class="inline-flex items-center gap-1"><input type="text" data-ans="after" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-20 text-center focus:outline-none"></span> school.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(3)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 4">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">4. We can <span class="inline-flex items-center gap-1"><input type="text" data-ans="buy" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-20 text-center focus:outline-none"></span> snacks at the <span class="inline-flex items-center gap-1"><input type="text" data-ans="tuck shop" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-28 text-center focus:outline-none"></span>.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(4)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 5">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">5. Let's eat <span class="inline-flex items-center gap-1"><input type="text" data-ans="some" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-20 text-center focus:outline-none"></span> biscuits.</div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="speakClozeSentence(5)" class="bg-purple-100 hover:bg-purple-200 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center text-sm btn-bounce flex-shrink-0 border border-purple-200 shadow-sm" title="Listen to sentence 6">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <div class="flex-grow">6. Are you tired? <span class="inline-flex items-center gap-1"><input type="text" data-ans="No, I'm not" class="cloze-input border-b-2 border-purple-400 bg-white px-2 py-0.5 text-purple-900 font-bold rounded w-32 text-center focus:outline-none"></span>.</div>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+      const totalBlanks = container.querySelectorAll('.cloze-input').length;
+      document.getElementById('cloze-progress').innerText = `Blanks to fill: ${totalBlanks}`;
+      document.getElementById('cloze-detailed-feedback').innerHTML = '';
+    }
+
+    function checkClozeAnswers() {
+      const inputs = document.querySelectorAll('.cloze-input');
+      let correctCount = 0;
+      let wrongList = [];
+
+      document.querySelectorAll('.cloze-corr-badge').forEach(e => e.remove());
+
+      inputs.forEach((input, idx) => {
+        const userVal = input.value.trim().toLowerCase();
+        const targetVal = input.getAttribute('data-ans').trim().toLowerCase();
+
+        if (userVal === targetVal) {
+          input.className = "cloze-input border-2 border-emerald-500 bg-emerald-50 px-2 py-0.5 text-emerald-900 font-bold rounded text-center focus:outline-none";
+          correctCount++;
+        } else {
+          input.className = "cloze-input border-2 border-rose-500 bg-rose-50 px-2 py-0.5 text-rose-900 font-bold rounded text-center focus:outline-none";
+          
+          const corrBadge = document.createElement('span');
+          corrBadge.className = 'cloze-corr-badge text-xs font-bold text-white bg-rose-500 px-1.5 py-0.5 rounded shadow-sm';
+          corrBadge.innerText = `Ans: ${input.getAttribute('data-ans')}`;
+          input.parentElement.appendChild(corrBadge);
+
+          wrongList.push({ index: idx + 1, user: input.value || '(empty)', correct: input.getAttribute('data-ans') });
+        }
+      });
+
+      const detailedFb = document.getElementById('cloze-detailed-feedback');
+
+      if (correctCount === inputs.length) {
+        playSoundEffect('correct');
+        incrementStreak();
+        addStars(3);
+        document.getElementById('cloze-progress').innerText = `🎉 Perfect Score! All ${correctCount}/${inputs.length} blanks correct!`;
+        detailedFb.innerHTML = `<div class="p-3 bg-emerald-100 border border-emerald-300 rounded-xl font-bold text-emerald-800 text-center">🌟 Outstanding dictation master! +3 Stars awarded!</div>`;
+        setMascotMessage("Fantastic dictation work! Every blank is correct!");
+      } else {
+        playSoundEffect('wrong');
+        resetStreak();
+        document.getElementById('cloze-progress').innerText = `Score: ${correctCount}/${inputs.length} correct. Correct answers are shown in red tags below!`;
+        
+        let wrongSummaryHtml = wrongList.map(item => `
+          <div class="flex justify-between items-center text-xs bg-white p-2 rounded-lg border border-rose-200">
+            <span class="font-bold text-slate-700">Blank #${item.index}:</span>
+            <span class="text-rose-600 line-through mr-2">${item.user}</span>
+            <span class="font-extrabold text-emerald-700">Correct: "${item.correct}"</span>
+          </div>
+        `).join('');
+
+        detailedFb.innerHTML = `
+          <div class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-4 space-y-2 mt-2">
+            <div class="font-bold text-rose-800 text-xs flex items-center gap-1">
+              <i class="fa-solid fa-circle-xmark"></i> Correct Answers for Red Blanks (${wrongList.length} wrong):
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${wrongSummaryHtml}</div>
+          </div>
+        `;
+        setMascotMessage("Review the correct answers shown above and try again!");
+      }
+    }
+
+    function loadSentenceDictation() {
+      document.getElementById('sentence-counter-badge').innerText = `Sentence ${currentDictSentenceIndex + 1} of ${dictationSentences.length}`;
+      document.getElementById('sentence-dict-input').value = '';
+      document.getElementById('sentence-dict-feedback').innerText = '';
+      setTimeout(() => playDictSentenceAudio(), 300);
+    }
+
+    function playDictSentenceAudio() {
+      speakText(dictationSentences[currentDictSentenceIndex]);
+    }
+
+    function speakFullDictationText() {
+      speakText(dictationSentences.join(' '));
+    }
+
+    function checkSentenceDictation() {
+      const user = document.getElementById('sentence-dict-input').value.trim().replace(/\s+/g, ' ');
+      const target = dictationSentences[currentDictSentenceIndex];
+      const fb = document.getElementById('sentence-dict-feedback');
+
+      const cleanUser = user.toLowerCase().replace(/[.,?']/g, '');
+      const cleanTarget = target.toLowerCase().replace(/[.,?']/g, '');
+
+      if (cleanUser === cleanTarget) {
+        fb.innerHTML = `
+          <div class="p-3 bg-emerald-100 border border-emerald-300 rounded-xl text-emerald-800">
+            🌟 Great job! Perfect sentence: "<strong>${target}</strong>"
+          </div>
+        `;
+        playSoundEffect('correct');
+        incrementStreak();
+        addStars(2);
+        setMascotMessage("Awesome sentence writing! You got it completely right!");
+        setTimeout(() => nextSentenceDictation(), 1500);
+      } else {
+        fb.innerHTML = `
+          <div class="bg-rose-50 border-2 border-rose-300 rounded-xl p-4 text-left space-y-2">
+            <div class="font-bold text-rose-800 text-sm flex items-center gap-1">
+              <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Incorrect! Here is the correct sentence:
+            </div>
+            <div class="bg-white p-2.5 rounded-lg border border-rose-200 font-extrabold text-emerald-700 text-base">
+              "${target}"
+            </div>
+            <div class="text-xs text-slate-500 font-medium">
+              Your answer was: <span class="text-rose-600 line-through font-bold">"${user || '(empty)'}"</span>
+            </div>
+          </div>
+        `;
+        playSoundEffect('wrong');
+        resetStreak();
+        setMascotMessage("Compare your answer with the correct sentence above!");
+      }
+    }
+
+    function nextSentenceDictation() {
+      currentDictSentenceIndex = (currentDictSentenceIndex + 1) % dictationSentences.length;
+      loadSentenceDictation();
+    }
+
+    /* Language Focus Rearrange Questions */
+    const scrambleQuestions = [
+      { target: "Where do you live?", words: ["Where", "do", "you", "live?"] },
+      { target: "I live in Sha Tin.", words: ["I", "live", "in", "Sha", "Tin."] },
+      { target: "I live on Hong Kong Island.", words: ["I", "live", "on", "Hong", "Kong", "Island."] },
+      { target: "How do you come to school?", words: ["How", "do", "you", "come", "to", "school?"] },
+      { target: "I come to school by bus.", words: ["I", "come", "to", "school", "by", "bus."] },
+      { target: "I come to school on foot.", words: ["I", "come", "to", "school", "on", "foot."] },
+      { target: "I walk to school.", words: ["I", "walk", "to", "school."] }
+    ];
+
+    let currentScrambleIdx = 0;
+    let userSelectedChips = [];
+
+    function loadScrambleSentence() {
+      document.getElementById('scramble-progress').innerText = `Sentence ${currentScrambleIdx + 1} of ${scrambleQuestions.length}`;
+      userSelectedChips = [];
+      renderScrambleUI();
+    }
+
+    function renderScrambleUI() {
+      const q = scrambleQuestions[currentScrambleIdx];
+      const dropzone = document.getElementById('scramble-dropzone');
+      const wordpool = document.getElementById('scramble-wordpool');
+
+      if (userSelectedChips.length === 0) {
+        dropzone.innerHTML = `<span class="text-slate-400 italic text-sm select-none" id="scramble-placeholder">Tap word chips below to assemble sentence...</span>`;
+      } else {
+        dropzone.innerHTML = userSelectedChips.map((word, idx) => `
+          <button onclick="removeChip(${idx})" class="bg-amber-500 text-white font-bold px-3 py-1.5 rounded-xl shadow btn-bounce text-sm flex items-center gap-1">
+            ${word} <i class="fa-solid fa-xmark text-xs opacity-70"></i>
+          </button>
+        `).join('');
+      }
+
+      const shuffled = [...q.words].sort(() => 0.5 - Math.random());
+      wordpool.innerHTML = shuffled.map((word) => `
+        <button onclick="addChip('${word}')" class="bg-white border-2 border-amber-300 text-amber-900 font-bold px-3.5 py-1.5 rounded-xl shadow-sm hover:bg-amber-100 btn-bounce text-sm">
+          ${word}
+        </button>
+      `).join('');
+
+      document.getElementById('scramble-feedback').innerText = '';
+    }
+
+    function addChip(word) {
+      userSelectedChips.push(word);
+      renderScrambleUI();
+    }
+
+    function removeChip(idx) {
+      userSelectedChips.splice(idx, 1);
+      renderScrambleUI();
+    }
+
+    function resetScrambleSentence() {
+      userSelectedChips = [];
+      renderScrambleUI();
+    }
+
+    function checkScrambleSentence() {
+      const userSentence = userSelectedChips.join(' ');
+      const targetSentence = scrambleQuestions[currentScrambleIdx].target;
+      const fb = document.getElementById('scramble-feedback');
+
+      if (userSentence === targetSentence) {
+        fb.innerText = "🌟 Spot on! Excellent sentence structure!";
+        fb.className = "mt-3 text-center font-bold text-sm text-emerald-600";
+        playSoundEffect('correct');
+        incrementStreak();
+        addStars(1);
+        setTimeout(() => nextScrambleSentence(), 1200);
+      } else {
+        fb.innerText = `❌ Try again! Target: "${targetSentence}"`;
+        fb.className = "mt-3 text-center font-bold text-sm text-rose-500";
+        playSoundEffect('wrong');
+        resetStreak();
+      }
+    }
+
+    function nextScrambleSentence() {
+      currentScrambleIdx = (currentScrambleIdx + 1) % scrambleQuestions.length;
+      loadScrambleSentence();
+    }
+
+    function playScrambleSentenceAudio() {
+      speakText(scrambleQuestions[currentScrambleIdx].target);
+    }
+
+    /* 30 Preposition Master Challenge Questions */
+    const prepQuestions = [
+      { text: "I live ___ Kowloon.", options: ["in", "on"], correct: "in", hint: "Kowloon is a region!" },
+      { text: "I live ___ Lantau Island.", options: ["in", "on"], correct: "on", hint: "Lantau Island is an island!" },
+      { text: "I live ___ the New Territories.", options: ["in", "on"], correct: "in", hint: "New Territories is a region!" },
+      { text: "I live ___ Cheung Chau.", options: ["in", "on"], correct: "on", hint: "Cheung Chau is an island!" },
+      { text: "I live ___ Sha Tin.", options: ["in", "on"], correct: "in", hint: "Sha Tin is a town/district!" },
+      { text: "I live ___ Hong Kong Island.", options: ["in", "on"], correct: "on", hint: "Hong Kong Island is an island!" },
+      { text: "I come to school ___ foot.", options: ["by", "on"], correct: "on", hint: "Remember: 'on foot'!" },
+      { text: "I come to school ___ minibus.", options: ["by", "on"], correct: "by", hint: "Vehicle transport uses 'by'!" },
+      { text: "I ___ to school every day.", options: ["walk", "by"], correct: "walk", hint: "Action verb for walking!" },
+      { text: "We buy snacks ___ the tuck shop.", options: ["at", "in"], correct: "at", hint: "Specific place uses 'at'!" },
+      { text: "I come to school ___ school bus.", options: ["by", "on"], correct: "by", hint: "Vehicles use 'by'!" },
+      { text: "She lives ___ Tuen Mun.", options: ["in", "on"], correct: "in", hint: "Tuen Mun is a district!" },
+      { text: "I go home ___ MTR.", options: ["by", "on"], correct: "by", hint: "MTR is a vehicle!" },
+      { text: "They travel ___ train.", options: ["by", "on"], correct: "by", hint: "Train is a vehicle!" },
+      { text: "We go to Lamma Island ___ ferry.", options: ["by", "on"], correct: "by", hint: "Ferry is transport!" },
+      { text: "I am waiting ___ the bus stop.", options: ["at", "in"], correct: "at", hint: "Bus stop uses 'at'!" },
+      { text: "He goes to work ___ car.", options: ["by", "on"], correct: "by", hint: "Car is transport!" },
+      { text: "My friend lives ___ Lamma Island.", options: ["in", "on"], correct: "on", hint: "Lamma Island is an island!" },
+      { text: "I eat lunch ___ 12 o'clock.", options: ["at", "in"], correct: "at", hint: "Specific time uses 'at'!" },
+      { text: "We go to school ___ the morning.", options: ["in", "at"], correct: "in", hint: "Time of day uses 'in'!" },
+      { text: "I have English class ___ Mondays.", options: ["on", "in"], correct: "on", hint: "Days of week use 'on'!" },
+      { text: "The cat is sleeping ___ the sofa.", options: ["on", "in"], correct: "on", hint: "Surface position uses 'on'!" },
+      { text: "The books are ___ my bag.", options: ["in", "on"], correct: "in", hint: "Inside something uses 'in'!" },
+      { text: "We play games ___ the playground.", options: ["in", "at"], correct: "in", hint: "Playground uses 'in'!" },
+      { text: "She goes home ___ taxi.", options: ["by", "on"], correct: "by", hint: "Taxi uses 'by'!" },
+      { text: "I live ___ Mong Kok.", options: ["in", "on"], correct: "in", hint: "Mong Kok is a district!" },
+      { text: "My uncle lives ___ Peng Chau.", options: ["in", "on"], correct: "on", hint: "Peng Chau is an island!" },
+      { text: "They go to the park ___ tram.", options: ["by", "on"], correct: "by", hint: "Tram is transport!" },
+      { text: "I am a student ___ Yam On School.", options: ["at", "in"], correct: "at", hint: "School name uses 'at'!" },
+      { text: "We line up ___ the entrance.", options: ["at", "in"], correct: "at", hint: "Specific spot uses 'at'!" }
+    ];
+
+    let currentPrepIdx = 0;
+
+    function loadPrepQuestion() {
+      const q = prepQuestions[currentPrepIdx];
+      const container = document.getElementById('prep-question-card');
+
+      container.innerHTML = `
+        <div class="flex justify-between items-center text-xs font-bold text-amber-800 border-b border-amber-100 pb-2">
+          <span>⚡ PREPOSITION MASTER</span>
+          <span class="bg-amber-100 text-amber-900 px-3 py-1 rounded-full">Question ${currentPrepIdx + 1} of ${prepQuestions.length}</span>
+        </div>
+
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-800 my-4">${q.text}</h3>
+        <p class="text-xs text-amber-700 italic mb-6"><i class="fa-solid fa-circle-info mr-1"></i> Hint: ${q.hint}</p>
+
+        <div class="flex gap-4 justify-center">
+          ${q.options.map(opt => `
+            <button onclick="checkPrepAnswer('${opt}')" class="bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xl px-10 py-3.5 rounded-2xl shadow-lg btn-bounce">
+              ${opt}
+            </button>
+          `).join('')}
+        </div>
+        <div id="prep-feedback" class="min-h-[30px] font-bold text-sm mt-4"></div>
+      `;
+    }
+
+    function checkPrepAnswer(selectedOpt) {
+      const q = prepQuestions[currentPrepIdx];
+      const fb = document.getElementById('prep-feedback');
+
+      if (selectedOpt === q.correct) {
+        fb.innerHTML = `<span class="text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-200">🌟 Correct! "${q.text.replace('___', q.correct)}"</span>`;
+        playSoundEffect('correct');
+        incrementStreak();
+        addStars(1);
+        setMascotMessage("Grammar Champion! You nailed that preposition!");
+        setTimeout(() => {
+          currentPrepIdx = (currentPrepIdx + 1) % prepQuestions.length;
+          loadPrepQuestion();
+        }, 1200);
+      } else {
+        fb.innerHTML = `<span class="text-rose-600 bg-rose-50 px-4 py-2 rounded-xl border border-rose-200">❌ Incorrect! Correct answer is "<strong>${q.correct}</strong>" (${q.hint})</span>`;
+        playSoundEffect('wrong');
+        resetStreak();
+        setMascotMessage(`Remember: ${q.hint}`);
+      }
+    }
+
+    function switchLangSubMode(mode) {
+      if (mode === 'rearrange') {
+        document.getElementById('lang-rearrange-view').classList.remove('hidden');
+        document.getElementById('lang-preposition-view').classList.add('hidden');
+        document.getElementById('lang-sub-rearrange').className = "px-3 py-1.5 rounded-xl font-bold text-xs bg-amber-500 text-white shadow-sm";
+        document.getElementById('lang-sub-prep').className = "px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-amber-600";
+        loadScrambleSentence();
+      } else {
+        document.getElementById('lang-rearrange-view').classList.add('hidden');
+        document.getElementById('lang-preposition-view').classList.remove('hidden');
+        document.getElementById('lang-sub-prep').className = "px-3 py-1.5 rounded-xl font-bold text-xs bg-amber-500 text-white shadow-sm";
+        document.getElementById('lang-sub-rearrange').className = "px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-amber-600";
+        currentPrepIdx = 0;
+        loadPrepQuestion();
+      }
+    }
+
+    /* Phonics Section */
+    const phonicsData = [
+      { letter: "a", word: "bat" },
+      { letter: "m", word: "mop" },
+      { letter: "p", word: "pick" },
+      { letter: "g", word: "gold" },
+      { letter: "f", word: "fit" },
+      { letter: "s", word: "sat" },
+      { letter: "b", word: "bit" },
+      { letter: "t", word: "tin" },
+      { letter: "d", word: "dot" }
+    ];
+
+    function renderPhonicsCards() {
+      const container = document.getElementById('phonics-cards-view');
+      container.innerHTML = phonicsData.map(item => `
+        <div class="bg-slate-50 border-2 border-emerald-200 rounded-2xl p-4 flex justify-between items-center shadow-sm">
+          <div>
+            <span class="bg-emerald-500 text-white font-extrabold px-3 py-1 rounded-xl text-lg mr-2">${item.letter}</span>
+            <span class="text-xl font-bold text-slate-800">${item.word}</span>
+          </div>
+          <button onclick="speakText('${item.word}')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 btn-bounce">
+            <i class="fa-solid fa-volume-high text-emerald-600"></i> Hear
+          </button>
+        </div>
+      `).join('');
+    }
+
+    let phonicsGameIdx = 0;
+
+    function initPhonicsGame() {
+      phonicsGameIdx = 0;
+      loadPhonicsGameQuestion();
+    }
+
+    function loadPhonicsGameQuestion() {
+      const current = phonicsData[phonicsGameIdx];
+      document.getElementById('phonics-game-prompt').innerText = `Target Letter: "${current.letter.toUpperCase()}" — Which word matches this sound?`;
+      document.getElementById('phonics-game-feedback').innerText = '';
+
+      const choices = [current.word];
+      while (choices.length < 3) {
+        const rand = phonicsData[Math.floor(Math.random() * phonicsData.length)].word;
+        if (!choices.includes(rand)) choices.push(rand);
+      }
+      choices.sort(() => 0.5 - Math.random());
+
+      const optionsDiv = document.getElementById('phonics-game-options');
+      optionsDiv.innerHTML = choices.map(word => `
+        <button onclick="checkPhonicsGameAnswer('${word}')" class="bg-white border-2 border-emerald-300 text-emerald-900 font-extrabold text-lg py-3 rounded-2xl shadow-sm hover:bg-emerald-100 btn-bounce">
+          ${word}
+        </button>
+      `).join('');
+
+      setTimeout(() => speakText(current.word), 300);
+    }
+
+    function playPhonicsGameAudio() {
+      speakText(phonicsData[phonicsGameIdx].word);
+    }
+
+    function checkPhonicsGameAnswer(selectedWord) {
+      const current = phonicsData[phonicsGameIdx];
+      const fb = document.getElementById('phonics-game-feedback');
+
+      if (selectedWord === current.word) {
+        fb.innerText = `🌟 Correct! ${current.letter} -> ${current.word}`;
+        fb.className = "h-6 font-bold text-sm text-emerald-600";
+        playSoundEffect('correct');
+        incrementStreak();
+        addStars(1);
+        setTimeout(() => {
+          phonicsGameIdx = (phonicsGameIdx + 1) % phonicsData.length;
+          loadPhonicsGameQuestion();
+        }, 1200);
+      } else {
+        fb.innerText = `❌ Try listening again!`;
+        fb.className = "h-6 font-bold text-sm text-rose-500";
+        playSoundEffect('wrong');
+        resetStreak();
+      }
+    }
+
+    function switchPhonicsSubMode(mode) {
+      if (mode === 'cards') {
+        document.getElementById('phonics-cards-view').classList.remove('hidden');
+        document.getElementById('phonics-game-view').classList.add('hidden');
+        document.getElementById('phonics-sub-cards').className = "px-3 py-1.5 rounded-xl font-bold text-xs bg-emerald-600 text-white shadow-sm";
+        document.getElementById('phonics-sub-game').className = "px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-emerald-600";
+      } else {
+        document.getElementById('phonics-cards-view').classList.add('hidden');
+        document.getElementById('phonics-game-view').classList.remove('hidden');
+        document.getElementById('phonics-sub-game').className = "px-3 py-1.5 rounded-xl font-bold text-xs bg-emerald-600 text-white shadow-sm";
+        document.getElementById('phonics-sub-cards').className = "px-3 py-1.5 rounded-xl font-bold text-xs text-slate-600 hover:text-emerald-600";
+        initPhonicsGame();
+      }
+    }
+
+    /* Sticker Book Logic */
+    const stickers = [
+      { id: 1, name: "Galactic Rocket", icon: "🚀", cost: 3, unlocked: false },
+      { id: 2, name: "Star Unicorn", icon: "🦄", cost: 5, unlocked: false },
+      { id: 3, name: "Golden Crown", icon: "👑", cost: 8, unlocked: false },
+      { id: 4, name: "Brave Lion", icon: "🦁", cost: 10, unlocked: false },
+      { id: 5, name: "Trophy Cup", icon: "🏆", cost: 12, unlocked: false },
+      { id: 6, name: "Fire Dragon", icon: "🐉", cost: 15, unlocked: false }
+    ];
+
+    function openStickerModal() {
+      renderStickerGrid();
+      document.getElementById('sticker-modal').classList.remove('hidden');
+    }
+
+    function closeStickerModal() {
+      document.getElementById('sticker-modal').classList.add('hidden');
+    }
+
+    function renderStickerGrid() {
+      const grid = document.getElementById('sticker-grid');
+      grid.innerHTML = stickers.map(s => `
+        <div class="border-2 ${s.unlocked ? 'border-amber-400 bg-amber-50' : 'border-slate-200 bg-slate-50'} rounded-2xl p-3 text-center flex flex-col justify-between items-center shadow-sm">
+          <div class="text-4xl my-2 ${s.unlocked ? '' : 'grayscale opacity-40'}">${s.icon}</div>
+          <div class="font-bold text-xs text-slate-800">${s.name}</div>
+          ${s.unlocked ? 
+            `<span class="text-[10px] font-extrabold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full mt-2">Unlocked!</span>` :
+            `<button onclick="buySticker(${s.id})" class="mt-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3 py-1 rounded-xl shadow btn-bounce flex items-center gap-1">
+              ⭐ ${s.cost} Stars
+            </button>`
+          }
+        </div>
+      `).join('');
+    }
+
+    function buySticker(id) {
+      const sticker = stickers.find(s => s.id === id);
+      if (!sticker) return;
+
+      if (totalStars >= sticker.cost) {
+        totalStars -= sticker.cost;
+        sticker.unlocked = true;
+        document.getElementById('star-count').innerText = totalStars;
+        playSoundEffect('levelUp');
+        triggerConfetti();
+        renderStickerGrid();
+        setMascotMessage(`🎉 Unlocked the ${sticker.name} sticker! Fantastic!`);
+      } else {
+        playSoundEffect('wrong');
+        setMascotMessage(`You need ${sticker.cost - totalStars} more stars to unlock ${sticker.name}! Keep practicing!`);
+      }
+    }
+
+    /* Badges System Logic */
+    const badges = [
+      { id: "first_star", name: "First Step", desc: "Earn your 1st Star", icon: "⭐", unlocked: false },
+      { id: "streak_5", name: "On Fire!", desc: "Reach a 3-Streak", icon: "🔥", unlocked: false },
+      { id: "level_2", name: "Scholar", desc: "Reach Level 2", icon: "🎓", unlocked: false },
+      { id: "dictation_pro", name: "Dictation Ace", desc: "Complete Cloze Dictation", icon: "📝", unlocked: false }
+    ];
+
+    function checkBadges() {
+      if (totalStars >= 1) unlockBadge("first_star");
+      if (currentStreak >= 3) unlockBadge("streak_5");
+      if (currentLevel >= 2) unlockBadge("level_2");
+    }
+
+    function unlockBadge(id) {
+      const b = badges.find(item => item.id === id);
+      if (b && !b.unlocked) {
+        b.unlocked = true;
+      }
+    }
+
+    function openBadgesModal() {
+      checkBadges();
+      const grid = document.getElementById('badges-grid');
+      grid.innerHTML = badges.map(b => `
+        <div class="p-3 border-2 ${b.unlocked ? 'border-sky-400 bg-sky-50' : 'border-slate-200 bg-slate-50'} rounded-2xl flex items-center gap-3">
+          <div class="text-3xl ${b.unlocked ? '' : 'grayscale opacity-30'}">${b.icon}</div>
+          <div>
+            <div class="font-bold text-sm text-slate-800">${b.name}</div>
+            <div class="text-xs text-slate-500">${b.desc}</div>
+            <div class="text-[10px] font-bold ${b.unlocked ? 'text-sky-600' : 'text-slate-400'}">
+              ${b.unlocked ? '✓ Unlocked' : 'Locked'}
+            </div>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('badges-modal').classList.remove('hidden');
+    }
+
+    function closeBadgesModal() {
+      document.getElementById('badges-modal').classList.add('hidden');
+    }
+
+    /* Navigation Tab Switching */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = "nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all bg-white text-slate-600 hover:bg-sky-50";
+      });
+
+      document.getElementById(tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.className = "nav-btn active flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all bg-sky-500 text-white shadow";
+    }
+
+    /* Confetti Burst Logic */
+    function triggerConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
+
+      for (let i = 0; i < 40; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 3,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.7) * 12,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: Math.random() * 8 + 4,
+          life: 1
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+
+        particles.forEach(p => {
+          if (p.life > 0) {
+            active = true;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.3;
+            p.life -= 0.02;
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0, p.life);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+
+        if (active) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      animate();
+    }
+
+    window.onload = function() {
+      renderVocabGrids();
+      renderClozeDictation();
+      loadScrambleSentence();
+      renderPhonicsCards();
+    };
+  </script>
+</body>
+</html>
